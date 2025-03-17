@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Patients List</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-header">Patient List</div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <form method="get" th:action="@{/patients}">
+                        <div class="input-group">
+                            <input type="text" name="keyword" class="form-control"
+                                   placeholder="Search" th:value="${keyword}">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a th:href="@{/addPatientForm}" class="btn btn-success">
+                        <i class="fa fa-plus"></i> Add Patient
+                    </a>
+                </div>
+            </div>
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Birth Date</th>
+                    <th>Health Status</th>
+                    <th>Score</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p:${patients}">
+                    <td th:text="${p.id}"></td>
+                    <td th:text="${p.name}"></td>
+                    <td th:text="${#dates.format(p.dateNaissance, 'yyyy-MM-dd')}"></td>
+                    <td>
+                        <span th:if="${p.malade}" class="badge bg-danger">Sick</span>
+                        <span th:unless="${p.malade}" class="badge bg-success">Healthy</span>
+                    </td>
+                    <td th:text="${p.score}"></td>
+                    <td>
+                        <a th:href="@{/editPatient(id=${p.id})}" class="btn btn-sm btn-warning">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <a sec:authorize="hasRole('ADMIN')" onclick="return confirm('Are you sure?')"
+                           th:href="@{/deletePatient(id=${p.id}, keyword=${keyword}, page=${currentPage})}"
+                           class="btn btn-sm btn-danger">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <nav th:if="${totalPages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/patients(page=${currentPage-1}, keyword=${keyword})}">Previous</a>
+                    </li>
+
+                    <li class="page-item" th:each="pageNumber : ${pageNumbers}"
+                        th:classappend="${pageNumber==currentPage ? 'active' : ''}">
+                        <a class="page-link" th:href="@{/patients(page=${pageNumber}, keyword=${keyword})}"
+                           th:text="${pageNumber + 1}"></a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/patients(page=${currentPage+1}, keyword=${keyword})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+</body>
+</html>
