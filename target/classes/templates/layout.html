@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +22,7 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/patients}">Home</a>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
                     <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
                         Admin
                     </a>
@@ -31,7 +32,14 @@
                     </ul>
                 </li>
             </ul>
-            <!-- Removed logout button and user info -->
+            <div class="d-flex">
+                <span class="nav-link text-light me-3" sec:authentication="name"></span>
+                <form method="post" th:action="@{/logout}" class="d-flex">
+                    <button type="submit" class="btn btn-outline-light">
+                        <i class="fa fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </nav>
