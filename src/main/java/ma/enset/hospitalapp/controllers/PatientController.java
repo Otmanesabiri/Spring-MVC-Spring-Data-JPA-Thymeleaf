@@ -95,4 +95,10 @@ public class PatientController {
         patientService.deletePatient(id);
         return "redirect:/patients?page=" + page + "&keyword=" + keyword;
     }
+
+    @PostMapping("/deletePatientFromForm")
+    public String deletePatientFromForm(@RequestParam(name = "id") Long id) {
+        patientService.deletePatient(id);
+        return "redirect:/patients";
+    }
 }
