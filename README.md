@@ -144,7 +144,7 @@ L'application utilise des templates Thymeleaf avec une intégration Spring Secur
 
 4. Accéder à l'application à :
    ```
-   http://localhost:8080
+   http://localhost:8085
    ```
 
 ## Identifiants de Connexion
