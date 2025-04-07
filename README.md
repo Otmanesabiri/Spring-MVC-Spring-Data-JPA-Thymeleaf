@@ -133,13 +133,10 @@ L'application utilise des templates Thymeleaf avec une intégration Spring Secur
    ```
 
 2. Naviguer vers le répertoire du projet :
-   ```bash
-   cd hospital-management
-   ```
 
 3. Exécuter l'application :
    ```bash
-   ./mvnw spring-boot:run
+   mvn spring-boot:run
    ```
 
 4. Accéder à l'application à :
