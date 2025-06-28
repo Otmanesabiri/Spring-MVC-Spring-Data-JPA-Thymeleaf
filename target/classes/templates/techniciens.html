@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestion des Techniciens</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2>Liste des Techniciens</h2>
+            </div>
+            <div class="card-body">
+                <form method="get" th:action="@{/techniciens}">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <input type="text" name="keyword" th:value="${keyword}" 
+                                   class="form-control" placeholder="Rechercher par nom, prénom ou spécialité..."
+                                   title="Rechercher un technicien"/>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary" title="Rechercher">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                            <a class="btn btn-success" th:href="@{/techniciens/form}" title="Ajouter un nouveau technicien">
+                                <i class="fas fa-plus-circle"></i> Nouveau Technicien
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Type</th>
+                        <th>Spécialité</th>
+                        <th>Certification</th>
+                        <th>Date Embauche</th>
+                        <th>Statut</th>
+                        <th>Actif</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="technicien : ${listTechniciens}">
+                        <td th:text="${technicien.id}"></td>
+                        <td th:text="${technicien.nom}"></td>
+                        <td th:text="${technicien.prenom}"></td>
+                        <td th:text="${technicien.email}"></td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${technicien.typeTechnicien.name() == 'LABORATOIRE' ? 'bg-info' : 
+                                                   technicien.typeTechnicien.name() == 'RADIOLOGIE' ? 'bg-primary' : 
+                                                   technicien.typeTechnicien.name() == 'MAINTENANCE_BIOMEDICALE' ? 'bg-warning' : 'bg-secondary'}"
+                                  th:text="${technicien.typeTechnicien.libelle}">
+                            </span>
+                        </td>
+                        <td th:text="${technicien.specialite}"></td>
+                        <td th:text="${technicien.certification}"></td>
+                        <td th:text="${#dates.format(technicien.dateEmbauche, 'dd/MM/yyyy')}"></td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${technicien.statut.name() == 'ACTIF' ? 'bg-success' : 
+                                                   technicien.statut.name() == 'CONGE' ? 'bg-info' : 
+                                                   technicien.statut.name() == 'FORMATION' ? 'bg-warning' : 'bg-secondary'}"
+                                  th:text="${technicien.statut.libelle}">
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${technicien.actif} ? 'bg-success' : 'bg-danger'"
+                                  th:text="${technicien.actif} ? 'Actif' : 'Inactif'">
+                            </span>
+                        </td>
+                        <td>
+                            <a class="btn btn-success btn-sm" 
+                               th:href="@{/techniciens/edit(id=${technicien.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Modifier le technicien">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a class="btn btn-danger btn-sm" 
+                               onclick="return confirm('Êtes-vous sûr?')"
+                               th:href="@{/techniciens/delete(id=${technicien.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Supprimer le technicien">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            <a class="btn btn-warning btn-sm" 
+                               th:if="${technicien.actif}"
+                               th:href="@{/techniciens/desactiver(id=${technicien.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Désactiver le technicien">
+                                <i class="fas fa-eye-slash"></i>
+                            </a>
+                            <a class="btn btn-info btn-sm" 
+                               th:if="${!technicien.actif}"
+                               th:href="@{/techniciens/activer(id=${technicien.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Activer le technicien">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" 
+                               th:href="@{/techniciens(page=${currentPage - 1}, keyword=${keyword})}">Précédent</a>
+                        </li>
+                        <li class="page-item" 
+                            th:each="page : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:classappend="${page == currentPage} ? 'active'">
+                            <a class="page-link" 
+                               th:href="@{/techniciens(page=${page}, keyword=${keyword})}" 
+                               th:text="${page + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" 
+                               th:href="@{/techniciens(page=${currentPage + 1}, keyword=${keyword})}">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="mt-3">
+                    <span th:text="'Total: ' + ${totalItems} + ' technicien(s)'"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

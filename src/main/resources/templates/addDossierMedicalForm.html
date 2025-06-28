@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Créer un Dossier Médical</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-folder-plus"></i> Créer un Nouveau Dossier Médical</h2>
+            </div>
+            <div class="card-body">
+                <!-- Affichage des messages d'erreur -->
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+                </div>
+                
+                <form method="post" th:action="@{/dossiers-medicaux/save}" th:object="${dossierMedical}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="patientId" class="form-label">Patient *</label>
+                                <select class="form-select" name="patientId" id="patientId" 
+                                        title="Sélectionner le patient" required>
+                                    <option value="">-- Sélectionner un patient --</option>
+                                    <option th:each="patient : ${patients}" 
+                                            th:value="${patient.id}" 
+                                            th:text="${patient.name + ' (ID: ' + patient.id + ')'}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="numeroDossier" class="form-label">Numéro de Dossier</label>
+                                <input type="text" class="form-control" 
+                                       th:field="*{numeroDossier}" 
+                                       id="numeroDossier"
+                                       placeholder="Sera généré automatiquement si vide"
+                                       title="Numéro du dossier médical"/>
+                                <span th:if="${#fields.hasErrors('numeroDossier')}" 
+                                      th:errors="*{numeroDossier}" 
+                                      class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="dateCreation" class="form-label">Date de Création *</label>
+                                <input type="date" class="form-control" 
+                                       th:field="*{dateCreation}" 
+                                       id="dateCreation"
+                                       title="Date de création du dossier"
+                                       required/>
+                                <span th:if="${#fields.hasErrors('dateCreation')}" 
+                                      th:errors="*{dateCreation}" 
+                                      class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="statut" class="form-label">Statut *</label>
+                                <select class="form-select" th:field="*{statut}" id="statut" 
+                                        title="Statut du dossier médical" required>
+                                    <option th:each="statutOption : ${statuts}" 
+                                            th:value="${statutOption}" 
+                                            th:text="${statutOption.libelle}">
+                                    </option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('statut')}" 
+                                      th:errors="*{statut}" 
+                                      class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="notesGenerales" class="form-label">Notes Générales</label>
+                        <textarea class="form-control" rows="4" 
+                                  th:field="*{notesGenerales}" 
+                                  id="notesGenerales"
+                                  placeholder="Notes générales sur le dossier médical..."
+                                  title="Notes générales"></textarea>
+                        <span th:if="${#fields.hasErrors('notesGenerales')}" 
+                              th:errors="*{notesGenerales}" 
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Information :</strong> 
+                        Un dossier médical sera créé pour le patient sélectionné. 
+                        Assurez-vous qu'aucun dossier n'existe déjà pour ce patient.
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a class="btn btn-secondary" th:href="@{/dossiers-medicaux}" title="Retour à la liste">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                        <button type="submit" class="btn btn-success" title="Créer le dossier médical">
+                            <i class="fas fa-save"></i> Créer le Dossier
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Définir la date d'aujourd'hui par défaut
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('dateCreation');
+            if (!dateInput.value) {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                const todayString = `${year}-${month}-${day}`;
+                dateInput.value = todayString;
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

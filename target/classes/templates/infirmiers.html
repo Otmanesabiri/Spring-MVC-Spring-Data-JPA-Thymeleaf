@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestion des Infirmiers</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2>Liste des Infirmiers</h2>
+            </div>
+            <div class="card-body">
+                <form method="get" th:action="@{/infirmiers}">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <input type="text" name="keyword" th:value="${keyword}" 
+                                   class="form-control" placeholder="Rechercher par nom, prénom ou spécialité..."
+                                   title="Rechercher un infirmier"/>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary" title="Rechercher">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                            <a class="btn btn-success" th:href="@{/infirmiers/form}" title="Ajouter un nouveau infirmier">
+                                <i class="fas fa-plus-circle"></i> Nouveau Infirmier
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Spécialité</th>
+                        <th>Diplôme</th>
+                        <th>Date Embauche</th>
+                        <th>Équipe</th>
+                        <th>Statut</th>
+                        <th>Actif</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="infirmier : ${listInfirmiers}">
+                        <td th:text="${infirmier.id}"></td>
+                        <td th:text="${infirmier.nom}"></td>
+                        <td th:text="${infirmier.prenom}"></td>
+                        <td th:text="${infirmier.email}"></td>
+                        <td th:text="${infirmier.specialite}"></td>
+                        <td th:text="${infirmier.diplome}"></td>
+                        <td th:text="${#dates.format(infirmier.dateEmbauche, 'dd/MM/yyyy')}"></td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${infirmier.equipe.name() == 'MATIN' ? 'bg-success' : 
+                                                   infirmier.equipe.name() == 'NUIT' ? 'bg-primary' : 
+                                                   infirmier.equipe.name() == 'APRES_MIDI' ? 'bg-info' : 'bg-secondary'}"
+                                  th:text="${infirmier.equipe.libelle}">
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${infirmier.statut.name() == 'ACTIF' ? 'bg-success' : 
+                                                   infirmier.statut.name() == 'CONGE' ? 'bg-info' : 
+                                                   infirmier.statut.name() == 'FORMATION' ? 'bg-warning' : 'bg-secondary'}"
+                                  th:text="${infirmier.statut.libelle}">
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${infirmier.actif} ? 'bg-success' : 'bg-danger'"
+                                  th:text="${infirmier.actif} ? 'Actif' : 'Inactif'">
+                            </span>
+                        </td>
+                        <td>
+                            <a class="btn btn-success btn-sm" 
+                               th:href="@{/infirmiers/edit(id=${infirmier.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Modifier l'infirmier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a class="btn btn-danger btn-sm" 
+                               onclick="return confirm('Êtes-vous sûr?')"
+                               th:href="@{/infirmiers/delete(id=${infirmier.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Supprimer l'infirmier">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            <a class="btn btn-warning btn-sm" 
+                               th:if="${infirmier.actif}"
+                               th:href="@{/infirmiers/desactiver(id=${infirmier.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Désactiver l'infirmier">
+                                <i class="fas fa-eye-slash"></i>
+                            </a>
+                            <a class="btn btn-info btn-sm" 
+                               th:if="${!infirmier.actif}"
+                               th:href="@{/infirmiers/activer(id=${infirmier.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Activer l'infirmier">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" 
+                               th:href="@{/infirmiers(page=${currentPage - 1}, keyword=${keyword})}">Précédent</a>
+                        </li>
+                        <li class="page-item" 
+                            th:each="page : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:classappend="${page == currentPage} ? 'active'">
+                            <a class="page-link" 
+                               th:href="@{/infirmiers(page=${page}, keyword=${keyword})}" 
+                               th:text="${page + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" 
+                               th:href="@{/infirmiers(page=${currentPage + 1}, keyword=${keyword})}">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="mt-3">
+                    <span th:text="'Total: ' + ${totalItems} + ' infirmier(s)'"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

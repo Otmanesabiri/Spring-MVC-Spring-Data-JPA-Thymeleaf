@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ajouter un Technicien</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2>Ajouter un Technicien</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" th:action="@{/techniciens/save}" th:object="${technicien}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nom" th:field="*{nom}" 
+                                       placeholder="Nom du technicien" title="Saisir le nom du technicien" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="prenom" class="form-label">Prénom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="prenom" th:field="*{prenom}" 
+                                       placeholder="Prénom du technicien" title="Saisir le prénom du technicien" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('prenom')}" th:errors="*{prenom}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" 
+                                       placeholder="email@hospital.ma" title="Saisir l'adresse email" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" 
+                                       placeholder="0661234567" title="Saisir le numéro de téléphone" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('telephone')}" th:errors="*{telephone}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="typeTechnicien" class="form-label">Type de Technicien <span class="text-danger">*</span></label>
+                                <select class="form-control" id="typeTechnicien" th:field="*{typeTechnicien}" 
+                                        title="Sélectionner le type de technicien" required>
+                                    <option value="">Sélectionner un type</option>
+                                    <option th:each="type : ${typesTechnicien}" 
+                                            th:value="${type}" 
+                                            th:text="${type.libelle}"></option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('typeTechnicien')}" th:errors="*{typeTechnicien}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="specialite" class="form-label">Spécialité <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="specialite" th:field="*{specialite}" 
+                                       placeholder="Spécialité technique" title="Saisir la spécialité" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('specialite')}" th:errors="*{specialite}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="certification" class="form-label">Certification <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="certification" th:field="*{certification}" 
+                                       placeholder="Certification professionnelle" title="Saisir la certification" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('certification')}" th:errors="*{certification}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateExpirationCertification" class="form-label">Date d'expiration certification</label>
+                                <input type="date" class="form-control" id="dateExpirationCertification" th:field="*{dateExpirationCertification}" 
+                                       title="Sélectionner la date d'expiration">
+                                <div class="text-danger" th:if="${#fields.hasErrors('dateExpirationCertification')}" th:errors="*{dateExpirationCertification}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateEmbauche" class="form-label">Date d'embauche <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="dateEmbauche" th:field="*{dateEmbauche}" 
+                                       title="Sélectionner la date d'embauche" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('dateEmbauche')}" th:errors="*{dateEmbauche}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="equipementsGeres" class="form-label">Équipements gérés</label>
+                                <textarea class="form-control" id="equipementsGeres" th:field="*{equipementsGeres}" 
+                                          placeholder="Liste des équipements sous responsabilité" title="Saisir les équipements gérés"></textarea>
+                                <div class="text-danger" th:if="${#fields.hasErrors('equipementsGeres')}" th:errors="*{equipementsGeres}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="horaire" class="form-label">Horaire <span class="text-danger">*</span></label>
+                                <select class="form-control" id="horaire" th:field="*{horaire}" 
+                                        title="Sélectionner l'horaire de travail" required>
+                                    <option value="">Sélectionner un horaire</option>
+                                    <option th:each="horaireType : ${horaires}" 
+                                            th:value="${horaireType}" 
+                                            th:text="${horaireType.libelle}"></option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('horaire')}" th:errors="*{horaire}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="statut" class="form-label">Statut <span class="text-danger">*</span></label>
+                                <select class="form-control" id="statut" th:field="*{statut}" 
+                                        title="Sélectionner le statut" required>
+                                    <option value="">Sélectionner un statut</option>
+                                    <option th:each="statutType : ${statuts}" 
+                                            th:value="${statutType}" 
+                                            th:text="${statutType.libelle}"></option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('statut')}" th:errors="*{statut}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="salaire" class="form-label">Salaire (MAD)</label>
+                                <input type="number" class="form-control" id="salaire" th:field="*{salaire}" 
+                                       placeholder="7000.00" step="0.01" min="0" title="Saisir le salaire">
+                                <div class="text-danger" th:if="${#fields.hasErrors('salaire')}" th:errors="*{salaire}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="actif" th:field="*{actif}">
+                                    <label class="form-check-label" for="actif">
+                                        Technicien actif
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/techniciens}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

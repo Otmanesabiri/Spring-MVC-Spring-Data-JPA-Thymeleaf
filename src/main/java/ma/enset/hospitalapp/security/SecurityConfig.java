@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -51,9 +50,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-            .formLogin(Customizer.withDefaults())
+            .formLogin(formLogin -> formLogin
+                .defaultSuccessUrl("/patients", true)
+                .permitAll()
+            )
             .authorizeHttpRequests(ar->ar.requestMatchers("/deletePatient/**").hasRole("ADMIN"))
             .authorizeHttpRequests(ar->ar.requestMatchers("/admin/**").hasRole("ADMIN"))
+            .authorizeHttpRequests(ar->ar.requestMatchers("/medecins/**").hasAnyRole("USER", "ADMIN"))
+            .authorizeHttpRequests(ar->ar.requestMatchers("/infirmiers/**").hasAnyRole("USER", "ADMIN"))
+            .authorizeHttpRequests(ar->ar.requestMatchers("/personnel-administratif/**").hasAnyRole("USER", "ADMIN"))
+            .authorizeHttpRequests(ar->ar.requestMatchers("/techniciens/**").hasAnyRole("USER", "ADMIN"))
+            .authorizeHttpRequests(ar->ar.requestMatchers("/consultations/**").hasAnyRole("USER", "ADMIN"))
+            .authorizeHttpRequests(ar->ar.requestMatchers("/rendez-vous/**").hasAnyRole("USER", "ADMIN"))
+            .authorizeHttpRequests(ar->ar.requestMatchers("/creneaux-horaires/**").hasAnyRole("USER", "ADMIN"))
+            .authorizeHttpRequests(ar->ar.requestMatchers("/dossiers-medicaux/**").hasAnyRole("USER", "ADMIN"))
             .authorizeHttpRequests(ar->ar.requestMatchers("/user/**").hasRole("USER"))
             .authorizeHttpRequests(ar->ar.anyRequest().authenticated())
             .exceptionHandling(eh -> eh.accessDeniedPage("/403"))

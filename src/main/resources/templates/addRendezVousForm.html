@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ajouter un Rendez-vous</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2>Planifier un Nouveau Rendez-vous</h2>
+            </div>
+            <div class="card-body">
+                <!-- Affichage des messages d'erreur -->
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+                </div>
+                
+                <form method="post" th:action="@{/rendez-vous/save}" th:object="${rendezVous}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="dateHeureRendezVous" class="form-label">Date et Heure du Rendez-vous *</label>
+                                <input type="datetime-local" class="form-control" 
+                                       th:field="*{dateHeureRendezVous}" 
+                                       id="dateHeureRendezVous"
+                                       placeholder="Sélectionner la date et l'heure"
+                                       title="Date et heure du rendez-vous"
+                                       required/>
+                                <span th:if="${#fields.hasErrors('dateHeureRendezVous')}" 
+                                      th:errors="*{dateHeureRendezVous}" 
+                                      class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="patientId" class="form-label">Patient *</label>
+                                <select class="form-select" name="patientId" id="patientId" 
+                                        title="Sélectionner le patient" required>
+                                    <option value="">-- Sélectionner un patient --</option>
+                                    <option th:each="patient : ${patients}" 
+                                            th:value="${patient.id}" 
+                                            th:text="${patient.name + ' (ID: ' + patient.id + ')'}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="medecinId" class="form-label">Médecin *</label>
+                                <select class="form-select" name="medecinId" id="medecinId" 
+                                        title="Sélectionner le médecin" required>
+                                    <option value="">-- Sélectionner un médecin --</option>
+                                    <option th:each="medecin : ${medecins}" 
+                                            th:value="${medecin.id}" 
+                                            th:text="${'Dr. ' + medecin.nom + ' ' + medecin.prenom + ' (' + medecin.specialite + ')'}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="type" class="form-label">Type de Rendez-vous *</label>
+                                <select class="form-select" th:field="*{type}" id="type" 
+                                        title="Type de rendez-vous" required>
+                                    <option th:each="typeOption : ${types}" 
+                                            th:value="${typeOption}" 
+                                            th:text="${typeOption.libelle}">
+                                    </option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('type')}" 
+                                      th:errors="*{type}" 
+                                      class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="dureeMinutes" class="form-label">Durée (minutes) *</label>
+                                <select class="form-select" th:field="*{dureeMinutes}" id="dureeMinutes" 
+                                        title="Durée du rendez-vous en minutes" required>
+                                    <option value="15">15 minutes</option>
+                                    <option value="30" selected>30 minutes</option>
+                                    <option value="45">45 minutes</option>
+                                    <option value="60">1 heure</option>
+                                    <option value="90">1h30</option>
+                                    <option value="120">2 heures</option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('dureeMinutes')}" 
+                                      th:errors="*{dureeMinutes}" 
+                                      class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="statut" class="form-label">Statut</label>
+                                <select class="form-select" th:field="*{statut}" id="statut" 
+                                        title="Statut du rendez-vous">
+                                    <option th:each="statutOption : ${statuts}" 
+                                            th:value="${statutOption}" 
+                                            th:text="${statutOption.libelle}">
+                                    </option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('statut')}" 
+                                      th:errors="*{statut}" 
+                                      class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="motif" class="form-label">Motif du Rendez-vous</label>
+                        <textarea class="form-control" rows="3" 
+                                  th:field="*{motif}" 
+                                  id="motif"
+                                  placeholder="Motif du rendez-vous..."
+                                  title="Motif du rendez-vous"></textarea>
+                        <span th:if="${#fields.hasErrors('motif')}" 
+                              th:errors="*{motif}" 
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" rows="2" 
+                                  th:field="*{notes}" 
+                                  id="notes"
+                                  placeholder="Notes particulières..."
+                                  title="Notes particulières"></textarea>
+                        <span th:if="${#fields.hasErrors('notes')}" 
+                              th:errors="*{notes}" 
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Aide :</strong> Assurez-vous que le créneau sélectionné est disponible pour le médecin choisi. 
+                        Le système vérifiera automatiquement la disponibilité lors de l'enregistrement.
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a class="btn btn-secondary" th:href="@{/rendez-vous}" title="Retour à la liste">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                        <div>
+                            <button type="button" class="btn btn-info me-2" onclick="verifierDisponibilite()" 
+                                    title="Vérifier la disponibilité">
+                                <i class="fas fa-search"></i> Vérifier disponibilité
+                            </button>
+                            <button type="submit" class="btn btn-success" title="Planifier le rendez-vous">
+                                <i class="fas fa-save"></i> Planifier
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function verifierDisponibilite() {
+            const medecinId = document.getElementById('medecinId').value;
+            const dateHeure = document.getElementById('dateHeureRendezVous').value;
+            
+            if (!medecinId || !dateHeure) {
+                alert('Veuillez sélectionner un médecin et une date/heure avant de vérifier la disponibilité.');
+                return;
+            }
+            
+            // Redirection vers la page de disponibilités
+            const date = new Date(dateHeure).toISOString().split('T')[0];
+            window.open(`/rendez-vous/disponibilites?medecinId=${medecinId}&date=${date}`, '_blank');
+        }
+        
+        // Mettre la date minimale à aujourd'hui
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('dateHeureRendezVous');
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+            dateInput.setAttribute('min', minDateTime);
+        });
+    </script>
+</div>
+</body>
+</html>

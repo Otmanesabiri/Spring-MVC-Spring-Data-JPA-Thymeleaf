@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Calendrier des Rendez-vous</title>
+    <style>
+        .calendar-day {
+            border: 1px solid #ddd;
+            min-height: 120px;
+            padding: 5px;
+        }
+        .rdv-item {
+            font-size: 0.8em;
+            margin-bottom: 2px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            background-color: #e3f2fd;
+            border-left: 3px solid #2196f3;
+        }
+        .rdv-urgent {
+            background-color: #ffebee;
+            border-left-color: #f44336;
+        }
+        .rdv-termine {
+            background-color: #e8f5e8;
+            border-left-color: #4caf50;
+        }
+        .heure-col {
+            width: 100px;
+        }
+        .no-rdv-message {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid mt-3">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2>Calendrier des Rendez-vous</h2>
+                <div class="btn-group">
+                    <a class="btn btn-secondary" th:href="@{/rendez-vous}" title="Retour à la liste">
+                        <i class="fas fa-list"></i> Liste
+                    </a>
+                    <a class="btn btn-primary" th:href="@{/rendez-vous/form}" title="Nouveau rendez-vous">
+                        <i class="fas fa-plus"></i> Nouveau
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <!-- Navigation de date -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="btn-group" role="group">
+                            <a class="btn btn-outline-primary" 
+                               th:href="@{/rendez-vous/calendrier(date=${#dates.format(#dates.createNow().time - 86400000, 'yyyy-MM-dd')})}"
+                               title="Jour précédent">
+                                <i class="fas fa-chevron-left"></i> Précédent
+                            </a>
+                            <a class="btn btn-outline-secondary" 
+                               th:href="@{/rendez-vous/calendrier}"
+                               title="Aujourd'hui">
+                                Aujourd'hui
+                            </a>
+                            <a class="btn btn-outline-primary" 
+                               th:href="@{/rendez-vous/calendrier(date=${#dates.format(#dates.createNow().time + 86400000, 'yyyy-MM-dd')})}"
+                               title="Jour suivant">
+                                Suivant <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h4 th:text="${#dates.format(dateSelectionnee, 'EEEE dd MMMM yyyy')}"></h4>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <form method="get" th:action="@{/rendez-vous/calendrier}" class="d-inline">
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="date" 
+                                       th:value="${#dates.format(dateSelectionnee, 'yyyy-MM-dd')}"
+                                       title="Sélectionner une date"/>
+                                <button type="submit" class="btn btn-outline-primary" title="Aller à la date">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Légende -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="d-flex gap-3">
+                            <div class="d-flex align-items-center">
+                                <div class="rdv-item me-2">Normal</div>
+                                <span>Rendez-vous normal</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="rdv-item rdv-urgent me-2">Urgent</div>
+                                <span>Rendez-vous urgent</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="rdv-item rdv-termine me-2">Terminé</div>
+                                <span>Rendez-vous terminé</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grille horaire du jour -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                                        <th class="heure-col">Heure</th>
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th style="width: 100px;">Heure</th>
+                                        <th>Rendez-vous</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Créneaux horaires de 8h à 18h -->
+                                    <tr th:each="heure : ${#numbers.sequence(8, 17)}">
+                                        <td class="text-center fw-bold">
+                                            <span th:text="${heure + ':00'}"></span>
+                                        </td>
+                                        <td class="calendar-day">
+                                            <!-- Rendez-vous pour cette heure -->
+                                            <div th:each="rdv : ${rendezVousJour}" 
+                                                 th:if="${#dates.hour(rdv.dateHeureRendezVous) == heure}">
+                                                <div class="rdv-item" 
+                                                     th:classappend="${rdv.type == T(ma.enset.hospitalapp.entities.TypeRendezVous).URGENCE} ? 'rdv-urgent' : 
+                                                                    ${rdv.statut == T(ma.enset.hospitalapp.entities.StatutRendezVous).TERMINE} ? 'rdv-termine' : ''"
+                                                     th:title="${rdv.motif}">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <strong th:text="${#dates.format(rdv.dateHeureRendezVous, 'HH:mm')}"></strong>
+                                                            <span th:text="${' - ' + rdv.patient.name}"></span><br>
+                                                            <small th:text="${'Dr. ' + rdv.medecin.nom + ' ' + rdv.medecin.prenom}"></small><br>
+                                                            <small class="text-muted" th:text="${rdv.type.libelle}"></small>
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" 
+                                                                    data-bs-toggle="dropdown" title="Actions">
+                                                                <i class="fas fa-cog"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <a class="dropdown-item" 
+                                                                       th:href="@{/rendez-vous/edit(id=${rdv.id})}"
+                                                                       title="Modifier">
+                                                                        <i class="fas fa-edit"></i> Modifier
+                                                                    </a>
+                                                                </li>
+                                                                <li th:if="${rdv.statut == T(ma.enset.hospitalapp.entities.StatutRendezVous).PLANIFIE}">
+                                                                    <a class="dropdown-item" 
+                                                                       th:href="@{/rendez-vous/confirmer(id=${rdv.id}, keyword='', page=0)}"
+                                                                       title="Confirmer">
+                                                                        <i class="fas fa-check text-success"></i> Confirmer
+                                                                    </a>
+                                                                </li>
+                                                                <li th:if="${rdv.statut == T(ma.enset.hospitalapp.entities.StatutRendezVous).CONFIRME}">
+                                                                    <a class="dropdown-item" 
+                                                                       th:href="@{/rendez-vous/commencer(id=${rdv.id}, keyword='', page=0)}"
+                                                                       title="Commencer">
+                                                                        <i class="fas fa-play text-primary"></i> Commencer
+                                                                    </a>
+                                                                </li>
+                                                                <li th:if="${rdv.statut == T(ma.enset.hospitalapp.entities.StatutRendezVous).EN_COURS}">
+                                                                    <a class="dropdown-item" 
+                                                                       th:href="@{/rendez-vous/terminer(id=${rdv.id}, keyword='', page=0)}"
+                                                                       title="Terminer">
+                                                                        <i class="fas fa-stop text-success"></i> Terminer
+                                                                    </a>
+                                                                </li>
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li>
+                                                                    <a class="dropdown-item" 
+                                                                       th:href="@{/rendez-vous/annuler(id=${rdv.id}, keyword='', page=0)}"
+                                                                       onclick="return confirm('Annuler ce rendez-vous ?')"
+                                                                       title="Annuler">
+                                                                        <i class="fas fa-times text-danger"></i> Annuler
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-1">
+                                                        <span class="badge" 
+                                                              th:classappend="${rdv.statut == T(ma.enset.hospitalapp.entities.StatutRendezVous).PLANIFIE} ? 'bg-secondary' : 
+                                                                             ${rdv.statut == T(ma.enset.hospitalapp.entities.StatutRendezVous).CONFIRME} ? 'bg-success' : 
+                                                                             ${rdv.statut == T(ma.enset.hospitalapp.entities.StatutRendezVous).EN_COURS} ? 'bg-primary' : 
+                                                                             ${rdv.statut == T(ma.enset.hospitalapp.entities.StatutRendezVous).TERMINE} ? 'bg-success' : 
+                                                                             ${rdv.statut == T(ma.enset.hospitalapp.entities.StatutRendezVous).ANNULE} ? 'bg-danger' : 'bg-warning'"
+                                                              th:text="${rdv.statut.libelle}">
+                                                        </span>
+                                                        <span class="badge bg-info" th:text="${rdv.dureeMinutes + 'min'}"></span>
+                                                    </div>
+                                                </div>
+                                            <div th:if="${#lists.isEmpty(rendezVousJour) or #lists.isEmpty(#lists.select(rendezVousJour, '#dates.hour(dateHeureRendezVous) == ' + heure))}" 
+                                                 class="text-muted text-center no-rdv-message">
+                                                <small>Aucun rendez-vous</small>
+                                            </div>
+                                                 class="text-muted text-center" style="padding: 20px;">
+                                                <small>Aucun rendez-vous</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Résumé du jour -->
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Résumé du jour</h5>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h4 class="text-primary" th:text="${#lists.size(rendezVousJour)}">0</h4>
+                                            <small>Total rendez-vous</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h4 class="text-success" th:text="${#lists.size(#lists.select(rendezVousJour, 'statut.name() == \"CONFIRME\"'))}">0</h4>
+                                            <small>Confirmés</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h4 class="text-warning" th:text="${#lists.size(#lists.select(rendezVousJour, 'statut.name() == \"PLANIFIE\"'))}">0</h4>
+                                            <small>En attente</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h4 class="text-info" th:text="${#lists.size(#lists.select(rendezVousJour, 'statut.name() == \"TERMINE\"'))}">0</h4>
+                                            <small>Terminés</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rendez-vous - Test</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2>Gestion des Rendez-vous</h2>
+                <a class="btn btn-primary" th:href="@{/rendez-vous/form}">
+                    <i class="fas fa-plus"></i> Nouveau Rendez-vous
+                </a>
+            </div>
+            <div class="card-body">
+                <div th:if="${listRendezVous != null and !listRendezVous.isEmpty()}">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date/Heure</th>
+                                <th>Patient</th>
+                                <th>Médecin</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="rdv : ${listRendezVous}">
+                                <td th:text="${rdv.id}"></td>
+                                <td th:text="${#dates.format(rdv.dateHeureRendezVous, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td th:text="${rdv.patient.name}"></td>
+                                <td th:text="${'Dr. ' + rdv.medecin.nom + ' ' + rdv.medecin.prenom}"></td>
+                                <td>
+                                    <span class="badge bg-primary" th:text="${rdv.statut.libelle}"></span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-primary" 
+                                       th:href="@{/rendez-vous/edit(id=${rdv.id})}">
+                                        Modifier
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:unless="${listRendezVous != null and !listRendezVous.isEmpty()}">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        Aucun rendez-vous trouvé. <a th:href="@{/rendez-vous/form}">Créer le premier rendez-vous</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

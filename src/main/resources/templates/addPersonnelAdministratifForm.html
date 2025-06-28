@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ajouter Personnel Administratif</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2>Ajouter un Nouveau Personnel Administratif</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" th:action="@{/personnel-administratif/save}" th:object="${personnel}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nom" th:field="*{nom}" 
+                                       placeholder="Entrez le nom" 
+                                       title="Nom du personnel (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="prenom" class="form-label">Prénom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="prenom" th:field="*{prenom}" 
+                                       placeholder="Entrez le prénom" 
+                                       title="Prénom du personnel (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('prenom')}" th:errors="*{prenom}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" 
+                                       placeholder="email@example.com" 
+                                       title="Adresse email du personnel (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" 
+                                       placeholder="0612345678" 
+                                       title="Numéro de téléphone du personnel (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('telephone')}" th:errors="*{telephone}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="poste" class="form-label">Poste <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="poste" th:field="*{poste}" 
+                                       placeholder="Réceptionniste, Secrétaire, etc." 
+                                       title="Poste occupé par le personnel (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('poste')}" th:errors="*{poste}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="departement" class="form-label">Département <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="departement" th:field="*{departement}" 
+                                       placeholder="Accueil, Administration, etc." 
+                                       title="Département du personnel (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('departement')}" th:errors="*{departement}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateEmbauche" class="form-label">Date d'Embauche <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="dateEmbauche" th:field="*{dateEmbauche}" 
+                                       title="Date d'embauche du personnel (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('dateEmbauche')}" th:errors="*{dateEmbauche}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="horaire" class="form-label">Horaire de Travail</label>
+                                <select class="form-select" id="horaire" th:field="*{horaire}" 
+                                        title="Sélectionnez l'horaire de travail">
+                                    <option value="">-- Sélectionnez un horaire --</option>
+                                    <option th:each="horaire : ${horaires}" 
+                                            th:value="${horaire}" 
+                                            th:text="${horaire.libelle}"></option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('horaire')}" th:errors="*{horaire}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="statut" class="form-label">Statut</label>
+                                <select class="form-select" id="statut" th:field="*{statut}" 
+                                        title="Sélectionnez le statut du personnel">
+                                    <option value="">-- Sélectionnez un statut --</option>
+                                    <option th:each="statut : ${statuts}" 
+                                            th:value="${statut}" 
+                                            th:text="${statut.libelle}"></option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('statut')}" th:errors="*{statut}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="niveauAcces" class="form-label">Niveau d'Accès</label>
+                                <select class="form-select" id="niveauAcces" th:field="*{niveauAcces}" 
+                                        title="Sélectionnez le niveau d'accès">
+                                    <option value="">-- Sélectionnez un niveau --</option>
+                                    <option th:each="niveau : ${niveauxAcces}" 
+                                            th:value="${niveau}" 
+                                            th:text="${niveau.libelle}"></option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('niveauAcces')}" th:errors="*{niveauAcces}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="salaire" class="form-label">Salaire (MAD)</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="salaire" th:field="*{salaire}" 
+                               placeholder="0.00" 
+                               title="Salaire du personnel en MAD"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('salaire')}" th:errors="*{salaire}"></div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="actif" th:field="*{actif}"
+                               title="Cochez si le personnel est actif" checked/>
+                        <label class="form-check-label" for="actif">
+                            Personnel actif
+                        </label>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/personnel-administratif}" class="btn btn-secondary" title="Retourner à la liste">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                        <button type="submit" class="btn btn-primary" title="Ajouter le personnel">
+                            <i class="fas fa-save"></i> Ajouter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

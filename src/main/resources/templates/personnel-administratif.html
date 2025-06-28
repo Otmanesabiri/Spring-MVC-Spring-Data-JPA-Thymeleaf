@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestion du Personnel Administratif</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2>Liste du Personnel Administratif</h2>
+            </div>
+            <div class="card-body">
+                <form method="get" th:action="@{/personnel-administratif}">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <input type="text" name="keyword" th:value="${keyword}" 
+                                   class="form-control" placeholder="Rechercher par nom, prénom ou poste..."
+                                   title="Rechercher un membre du personnel administratif"/>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary" title="Rechercher">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                            <a class="btn btn-success" th:href="@{/personnel-administratif/form}" title="Ajouter un nouveau membre du personnel">
+                                <i class="fas fa-plus-circle"></i> Nouveau Personnel
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Poste</th>
+                        <th>Département</th>
+                        <th>Date Embauche</th>
+                        <th>Statut</th>
+                        <th>Niveau Accès</th>
+                        <th>Actif</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="personnel : ${listPersonnelAdministratif}">
+                        <td th:text="${personnel.id}"></td>
+                        <td th:text="${personnel.nom}"></td>
+                        <td th:text="${personnel.prenom}"></td>
+                        <td th:text="${personnel.email}"></td>
+                        <td th:text="${personnel.poste}"></td>
+                        <td th:text="${personnel.departement}"></td>
+                        <td th:text="${#dates.format(personnel.dateEmbauche, 'dd/MM/yyyy')}"></td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${personnel.statut.name() == 'ACTIF' ? 'bg-success' : 
+                                                   personnel.statut.name() == 'CONGE' ? 'bg-info' : 
+                                                   personnel.statut.name() == 'FORMATION' ? 'bg-warning' : 'bg-secondary'}"
+                                  th:text="${personnel.statut.libelle}">
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${personnel.niveauAcces.name() == 'ADMINISTRATEUR' ? 'bg-danger' : 
+                                                   personnel.niveauAcces.name() == 'AVANCE' ? 'bg-warning' : 
+                                                   personnel.niveauAcces.name() == 'INTERMEDIAIRE' ? 'bg-info' : 'bg-secondary'}"
+                                  th:text="${personnel.niveauAcces.libelle}">
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${personnel.actif} ? 'bg-success' : 'bg-danger'"
+                                  th:text="${personnel.actif} ? 'Actif' : 'Inactif'">
+                            </span>
+                        </td>
+                        <td>
+                            <a class="btn btn-success btn-sm" 
+                               th:href="@{/personnel-administratif/edit(id=${personnel.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Modifier le personnel">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a class="btn btn-danger btn-sm" 
+                               onclick="return confirm('Êtes-vous sûr?')"
+                               th:href="@{/personnel-administratif/delete(id=${personnel.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Supprimer le personnel">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            <a class="btn btn-warning btn-sm" 
+                               th:if="${personnel.actif}"
+                               th:href="@{/personnel-administratif/desactiver(id=${personnel.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Désactiver le personnel">
+                                <i class="fas fa-eye-slash"></i>
+                            </a>
+                            <a class="btn btn-info btn-sm" 
+                               th:if="${!personnel.actif}"
+                               th:href="@{/personnel-administratif/activer(id=${personnel.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Activer le personnel">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" 
+                               th:href="@{/personnel-administratif(page=${currentPage - 1}, keyword=${keyword})}">Précédent</a>
+                        </li>
+                        <li class="page-item" 
+                            th:each="page : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:classappend="${page == currentPage} ? 'active'">
+                            <a class="page-link" 
+                               th:href="@{/personnel-administratif(page=${page}, keyword=${keyword})}" 
+                               th:text="${page + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" 
+                               th:href="@{/personnel-administratif(page=${currentPage + 1}, keyword=${keyword})}">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="mt-3">
+                    <span th:text="'Total: ' + ${totalItems} + ' membre(s) du personnel administratif'"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

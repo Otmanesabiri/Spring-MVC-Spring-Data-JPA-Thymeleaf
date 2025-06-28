@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestion des Consultations</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2>Liste des Consultations</h2>
+            </div>
+            <div class="card-body">
+                <form method="get" th:action="@{/consultations}">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <input type="text" name="keyword" th:value="${keyword}" 
+                                   class="form-control" placeholder="Rechercher..."
+                                   title="Rechercher une consultation"/>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary" title="Rechercher">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                            <a class="btn btn-success" th:href="@{/consultations/form}" title="Ajouter une nouvelle consultation">
+                                <i class="fas fa-plus-circle"></i> Nouvelle Consultation
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Patient</th>
+                        <th>Médecin</th>
+                        <th>Motif</th>
+                        <th>Diagnostic</th>
+                        <th>Statut</th>
+                        <th>Tarif</th>
+                        <th>Payée</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="consultation : ${listConsultations}">
+                        <td th:text="${consultation.id}"></td>
+                        <td th:text="${#dates.format(consultation.dateConsultation, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${consultation.patient.name}"></td>
+                        <td th:text="${'Dr. ' + consultation.medecin.nom + ' ' + consultation.medecin.prenom}"></td>
+                        <td>
+                            <span th:text="${#strings.abbreviate(consultation.motifConsultation, 30)}"
+                                  th:title="${consultation.motifConsultation}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${#strings.abbreviate(consultation.diagnostic, 30)}"
+                                  th:title="${consultation.diagnostic}"></span>
+                        </td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${consultation.statut.name() == 'PLANIFIEE' ? 'bg-info' : 
+                                                   consultation.statut.name() == 'EN_COURS' ? 'bg-warning' : 
+                                                   consultation.statut.name() == 'TERMINEE' ? 'bg-success' : 'bg-secondary'}"
+                                  th:text="${consultation.statut.libelle}">
+                            </span>
+                        </td>
+                        <td th:text="${consultation.tarif + ' MAD'}"></td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${consultation.payee} ? 'bg-success' : 'bg-danger'"
+                                  th:text="${consultation.payee} ? 'Payée' : 'Non payée'">
+                            </span>
+                        </td>
+                        <td>
+                            <a class="btn btn-success btn-sm" 
+                               th:href="@{/consultations/edit(id=${consultation.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Modifier la consultation">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a class="btn btn-danger btn-sm" 
+                               onclick="return confirm('Êtes-vous sûr?')"
+                               th:href="@{/consultations/delete(id=${consultation.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Supprimer la consultation">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            <a class="btn btn-info btn-sm" 
+                               th:if="${!consultation.payee}"
+                               th:href="@{/consultations/marquer-paye(id=${consultation.id}, keyword=${keyword}, page=${currentPage})}"
+                               title="Marquer comme payée">
+                                <i class="fas fa-credit-card"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" 
+                               th:href="@{/consultations(page=${currentPage - 1}, keyword=${keyword})}">Précédent</a>
+                        </li>
+                        <li class="page-item" 
+                            th:each="page : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:classappend="${page == currentPage} ? 'active'">
+                            <a class="page-link" 
+                               th:href="@{/consultations(page=${page}, keyword=${keyword})}" 
+                               th:text="${page + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" 
+                               th:href="@{/consultations(page=${currentPage + 1}, keyword=${keyword})}">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="mt-3">
+                    <span th:text="'Total: ' + ${totalItems} + ' consultation(s)'"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

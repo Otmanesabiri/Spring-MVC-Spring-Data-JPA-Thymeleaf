@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Modifier Technicien</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2>Modifier Technicien</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" th:action="@{/techniciens/save}" th:object="${technicien}">
+                    <input type="hidden" th:field="*{id}"/>
+                    <input type="hidden" name="page" th:value="${page}"/>
+                    <input type="hidden" name="keyword" th:value="${keyword}"/>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nom" th:field="*{nom}" 
+                                       placeholder="Entrez le nom du technicien" 
+                                       title="Nom du technicien (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="prenom" class="form-label">Prénom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="prenom" th:field="*{prenom}" 
+                                       placeholder="Entrez le prénom du technicien" 
+                                       title="Prénom du technicien (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('prenom')}" th:errors="*{prenom}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" 
+                                       placeholder="email@example.com" 
+                                       title="Adresse email du technicien (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" 
+                                       placeholder="0612345678" 
+                                       title="Numéro de téléphone du technicien (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('telephone')}" th:errors="*{telephone}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="typeTechnicien" class="form-label">Type de Technicien <span class="text-danger">*</span></label>
+                                <select class="form-select" id="typeTechnicien" th:field="*{typeTechnicien}" 
+                                        title="Sélectionnez le type de technicien" required>
+                                    <option value="">-- Sélectionnez un type --</option>
+                                    <option th:each="type : ${typesTechnicien}" 
+                                            th:value="${type}" 
+                                            th:text="${type.libelle}"></option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('typeTechnicien')}" th:errors="*{typeTechnicien}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="specialite" class="form-label">Spécialité <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="specialite" th:field="*{specialite}" 
+                                       placeholder="Entrez la spécialité" 
+                                       title="Spécialité du technicien (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('specialite')}" th:errors="*{specialite}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="certification" class="form-label">Certification <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="certification" th:field="*{certification}" 
+                                       placeholder="Entrez la certification" 
+                                       title="Certification du technicien (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('certification')}" th:errors="*{certification}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateEmbauche" class="form-label">Date d'Embauche <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="dateEmbauche" th:field="*{dateEmbauche}" 
+                                       title="Date d'embauche du technicien (obligatoire)" required/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('dateEmbauche')}" th:errors="*{dateEmbauche}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dateExpirationCertification" class="form-label">Date d'Expiration Certification</label>
+                                <input type="date" class="form-control" id="dateExpirationCertification" th:field="*{dateExpirationCertification}" 
+                                       title="Date d'expiration de la certification"/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('dateExpirationCertification')}" th:errors="*{dateExpirationCertification}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="horaire" class="form-label">Horaire de Travail</label>
+                                <select class="form-select" id="horaire" th:field="*{horaire}" 
+                                        title="Sélectionnez l'horaire de travail">
+                                    <option value="">-- Sélectionnez un horaire --</option>
+                                    <option th:each="horaire : ${horaires}" 
+                                            th:value="${horaire}" 
+                                            th:text="${horaire.libelle}"></option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('horaire')}" th:errors="*{horaire}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="statut" class="form-label">Statut</label>
+                                <select class="form-select" id="statut" th:field="*{statut}" 
+                                        title="Sélectionnez le statut du technicien">
+                                    <option value="">-- Sélectionnez un statut --</option>
+                                    <option th:each="statut : ${statuts}" 
+                                            th:value="${statut}" 
+                                            th:text="${statut.libelle}"></option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('statut')}" th:errors="*{statut}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="salaire" class="form-label">Salaire (MAD)</label>
+                                <input type="number" step="0.01" min="0" class="form-control" id="salaire" th:field="*{salaire}" 
+                                       placeholder="0.00" 
+                                       title="Salaire du technicien en MAD"/>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('salaire')}" th:errors="*{salaire}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="equipementsGeres" class="form-label">Équipements Gérés</label>
+                        <textarea class="form-control" id="equipementsGeres" th:field="*{equipementsGeres}" 
+                                  rows="3" placeholder="Liste des équipements sous la responsabilité du technicien"
+                                  title="Décrivez les équipements gérés par le technicien"></textarea>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('equipementsGeres')}" th:errors="*{equipementsGeres}"></div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="actif" th:field="*{actif}"
+                               title="Cochez si le technicien est actif"/>
+                        <label class="form-check-label" for="actif">
+                            Technicien actif
+                        </label>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/techniciens(page=${page}, keyword=${keyword})}" 
+                           class="btn btn-secondary" title="Retourner à la liste">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                        <button type="submit" class="btn btn-primary" title="Sauvegarder les modifications">
+                            <i class="fas fa-save"></i> Modifier
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
