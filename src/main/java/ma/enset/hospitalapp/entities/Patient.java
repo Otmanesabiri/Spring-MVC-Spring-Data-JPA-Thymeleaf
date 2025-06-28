@@ -18,6 +18,17 @@ public class Patient {
     @NotEmpty
     @Size(min = 2, max = 40)
     private String name;
+    
+    @Size(min = 2, max = 40)
+    private String nom;
+    
+    @Size(min = 2, max = 40)
+    private String prenom;
+    
+    @Email
+    private String email;
+    
+    private String telephone;
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")

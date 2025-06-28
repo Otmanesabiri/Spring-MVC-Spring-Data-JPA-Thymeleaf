@@ -69,7 +69,7 @@
                                         </td>
                                         <td>
                                             <i class="fas fa-user"></i>
-                                            <span th:text="${dossier.patientNomComplet}">Nom Patient</span>
+                                            <span th:text="${(dossier.patient.nom != null and dossier.patient.prenom != null) ? dossier.patient.nom + ' ' + dossier.patient.prenom : dossier.patient.name}">Nom Patient</span>
                                         </td>
                                         <td th:text="${#dates.format(dossier.dateCreation, 'dd/MM/yyyy')}">01/01/2024</td>
                                         <td th:text="${#dates.format(dossier.dateDerniereModification, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</td>

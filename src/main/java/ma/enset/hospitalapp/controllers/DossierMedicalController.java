@@ -1,6 +1,5 @@
 package ma.enset.hospitalapp.controllers;
 
-import jakarta.validation.Valid;
 import ma.enset.hospitalapp.entities.*;
 import ma.enset.hospitalapp.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @Controller
 @RequestMapping("/dossiers-medicaux")
@@ -59,7 +60,7 @@ public class DossierMedicalController {
     }
 
     @PostMapping("/save")
-    public String save(Model model, @Valid DossierMedical dossierMedical, BindingResult bindingResult,
+    public String save(Model model, DossierMedical dossierMedical, BindingResult bindingResult,
                        @RequestParam(defaultValue = "0") int page,
                        @RequestParam(defaultValue = "") String keyword,
                        @RequestParam(required = false) Long patientId) {
@@ -91,17 +92,35 @@ public class DossierMedicalController {
             // Assigner le patient au dossier
             dossierMedical.setPatient(patient);
             
+            // Générer automatiquement le numéro de dossier si vide
+            if (dossierMedical.getNumeroDossier() == null || dossierMedical.getNumeroDossier().trim().isEmpty()) {
+                String numeroGenere = "DOS-" + System.currentTimeMillis();
+                dossierMedical.setNumeroDossier(numeroGenere);
+            }
+            
             // Définir des valeurs par défaut si nécessaire
             if (dossierMedical.getStatut() == null) {
                 dossierMedical.setStatut(StatutDossier.ACTIF);
             }
             
-            // Vérifier les erreurs de validation
-            if (bindingResult.hasErrors()) {
-                StringBuilder errorMsg = new StringBuilder("Erreurs de validation: ");
-                bindingResult.getAllErrors().forEach(error -> 
-                    errorMsg.append(error.getDefaultMessage()).append("; "));
-                model.addAttribute("error", errorMsg.toString());
+            // Définir la date de création si elle n'est pas définie
+            if (dossierMedical.getDateCreation() == null) {
+                dossierMedical.setDateCreation(new Date());
+            }
+            
+            // Validation manuelle des champs obligatoires
+            if (dossierMedical.getPatient() == null) {
+                model.addAttribute("error", "Le patient est obligatoire");
+                return "addDossierMedicalForm";
+            }
+            
+            if (dossierMedical.getNumeroDossier() == null || dossierMedical.getNumeroDossier().trim().isEmpty()) {
+                model.addAttribute("error", "Le numéro de dossier est obligatoire");
+                return "addDossierMedicalForm";
+            }
+            
+            if (dossierMedical.getDateCreation() == null) {
+                model.addAttribute("error", "La date de création est obligatoire");
                 return "addDossierMedicalForm";
             }
             
@@ -180,5 +199,94 @@ public class DossierMedicalController {
         }
         
         return "redirect:/dossiers-medicaux/details?id=" + dossier.getId();
+    }
+    
+    @GetMapping("/dossier-medical/{id}")
+    public String viewDossierDetails(@PathVariable Long id, Model model) {
+        try {
+            DossierMedical dossier = dossierMedicalService.getDossierMedical(id);
+            
+            model.addAttribute("dossier", dossier);
+            
+            // TODO: Ajouter les données récentes des sous-modules si nécessaire
+            // model.addAttribute("recentHistoriques", historiqueService.getRecentByDossier(id, 5));
+            // model.addAttribute("recentPrescriptions", prescriptionService.getActiveByDossier(id));
+            
+            return "dossier-medical-details";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "error";
+        }
+    }
+
+    @PostMapping("/update")
+    public String updateDossierMedical(Model model, DossierMedical dossierMedical, BindingResult bindingResult,
+                                      @RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "") String keyword,
+                                      @RequestParam(required = false) Long patientId) {
+        
+        try {
+            // Ajouter les listes pour le formulaire en cas d'erreur
+            model.addAttribute("patients", patientService.findAllPatients(PageRequest.of(0, 100)).getContent());
+            model.addAttribute("statuts", StatutDossier.values());
+            model.addAttribute("keyword", keyword);
+            model.addAttribute("page", page);
+            
+            // Validation du patient
+            if (patientId == null) {
+                model.addAttribute("error", "Veuillez sélectionner un patient");
+                return "editDossierMedicalForm";
+            }
+            
+            // Récupérer le patient
+            Patient patient = patientService.getPatient(patientId);
+            if (patient == null) {
+                model.addAttribute("error", "Patient introuvable");
+                return "editDossierMedicalForm";
+            }
+            
+            // Assigner le patient au dossier
+            dossierMedical.setPatient(patient);
+            
+            // Assurer que le numéro de dossier n'est pas vide
+            if (dossierMedical.getNumeroDossier() == null || dossierMedical.getNumeroDossier().trim().isEmpty()) {
+                String numeroGenere = "DOS-" + System.currentTimeMillis();
+                dossierMedical.setNumeroDossier(numeroGenere);
+            }
+            
+            // Définir des valeurs par défaut si nécessaire
+            if (dossierMedical.getStatut() == null) {
+                dossierMedical.setStatut(StatutDossier.ACTIF);
+            }
+            
+            // Mettre à jour la date de modification
+            dossierMedical.setDateDerniereModification(new Date());
+            
+            // Validation manuelle des champs obligatoires
+            if (dossierMedical.getPatient() == null) {
+                model.addAttribute("error", "Le patient est obligatoire");
+                return "editDossierMedicalForm";
+            }
+            
+            if (dossierMedical.getNumeroDossier() == null || dossierMedical.getNumeroDossier().trim().isEmpty()) {
+                model.addAttribute("error", "Le numéro de dossier est obligatoire");
+                return "editDossierMedicalForm";
+            }
+            
+            // Sauvegarder le dossier
+            DossierMedical savedDossier = dossierMedicalService.saveDossierMedical(dossierMedical);
+            
+            if (savedDossier != null) {
+                return "redirect:/dossiers-medicaux?page=" + page + "&keyword=" + keyword + "&updated=true";
+            } else {
+                model.addAttribute("error", "Erreur lors de la mise à jour du dossier médical");
+                return "editDossierMedicalForm";
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Erreur lors de la mise à jour : " + e.getMessage());
+            return "editDossierMedicalForm";
+        }
     }
 }

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Détails du Dossier Médical</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        
+        <!-- En-tête avec informations du patient -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-folder-open"></i> 
+                        Dossier Médical - <span th:text="${dossier.numeroDossier}"></span>
+                    </h2>
+                    <div>
+                        <span class="badge" 
+                              th:classappend="${dossier.statut.name() == 'ACTIF'} ? 'bg-success' : (${dossier.statut.name() == 'ARCHIVE'} ? 'bg-secondary' : 'bg-warning')"
+                              th:text="${dossier.statut.libelle}">
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-user"></i> Informations Patient</h5>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Nom :</strong></td>
+                                <td th:text="${(dossier.patient.nom != null and dossier.patient.prenom != null) ? dossier.patient.nom + ' ' + dossier.patient.prenom : dossier.patient.name}"></td>
+                            </tr>
+                            <tr th:if="${dossier.patient.email != null}">
+                                <td><strong>Email :</strong></td>
+                                <td th:text="${dossier.patient.email}"></td>
+                            </tr>
+                            <tr th:if="${dossier.patient.telephone != null}">
+                                <td><strong>Téléphone :</strong></td>
+                                <td th:text="${dossier.patient.telephone}"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Date de naissance :</strong></td>
+                                <td th:text="${#dates.format(dossier.patient.dateNaissance, 'dd/MM/yyyy')}"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Maladie :</strong></td>
+                                <td th:text="${dossier.patient.malade ? 'Oui' : 'Non'}"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-file-medical"></i> Informations Dossier</h5>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Numéro :</strong></td>
+                                <td><code th:text="${dossier.numeroDossier}"></code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Date de création :</strong></td>
+                                <td th:text="${#dates.format(dossier.dateCreation, 'dd/MM/yyyy HH:mm')}"></td>
+                            </tr>
+                            <tr th:if="${dossier.dateDerniereModification != null}">
+                                <td><strong>Dernière modification :</strong></td>
+                                <td th:text="${#dates.format(dossier.dateDerniereModification, 'dd/MM/yyyy HH:mm')}"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Statut :</strong></td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${dossier.statut.name() == 'ACTIF'} ? 'bg-success' : (${dossier.statut.name() == 'ARCHIVE'} ? 'bg-secondary' : 'bg-warning')"
+                                          th:text="${dossier.statut.libelle}">
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Notes générales -->
+                <div th:if="${dossier.notesGenerales != null and !#strings.isEmpty(dossier.notesGenerales)}" class="mt-3">
+                    <h5><i class="fas fa-sticky-note"></i> Notes Générales</h5>
+                    <div class="alert alert-light border">
+                        <p th:text="${dossier.notesGenerales}" class="mb-0"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-cogs"></i> Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a th:href="@{/dossiers-medicaux/edit(id=${dossier.id})}" 
+                           class="btn btn-warning w-100">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2" th:if="${dossier.statut.name() == 'ACTIF'}">
+                        <a th:href="@{/dossiers-medicaux/archiver(id=${dossier.id})}" 
+                           class="btn btn-secondary w-100"
+                           onclick="return confirm('Êtes-vous sûr de vouloir archiver ce dossier ?')">
+                            <i class="fas fa-archive"></i> Archiver
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2" th:if="${dossier.statut.name() == 'ARCHIVE'}">
+                        <a th:href="@{/dossiers-medicaux/activer(id=${dossier.id})}" 
+                           class="btn btn-success w-100">
+                            <i class="fas fa-check"></i> Activer
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a th:href="@{/dossiers-medicaux}" 
+                           class="btn btn-info w-100">
+                            <i class="fas fa-list"></i> Liste des Dossiers
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modules du dossier médical -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-history"></i> Historiques Médicaux</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Gérez l'historique médical du patient.</p>
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/historiques-medicaux(dossierId=${dossier.id})}" 
+                               class="btn btn-outline-info">
+                                <i class="fas fa-eye"></i> Voir Historiques
+                            </a>
+                            <a th:href="@{/historiques-medicaux/form(dossierId=${dossier.id})}" 
+                               class="btn btn-info">
+                                <i class="fas fa-plus"></i> Ajouter Historique
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-prescription-bottle-alt"></i> Prescriptions</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Gérez les prescriptions médicales.</p>
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/prescriptions(dossierId=${dossier.id})}" 
+                               class="btn btn-outline-success">
+                                <i class="fas fa-eye"></i> Voir Prescriptions
+                            </a>
+                            <a th:href="@{/prescriptions/form(dossierId=${dossier.id})}" 
+                               class="btn btn-success">
+                                <i class="fas fa-plus"></i> Ajouter Prescription
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-flask"></i> Examens</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Gérez les résultats d'examens.</p>
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/examens(dossierId=${dossier.id})}" 
+                               class="btn btn-outline-warning">
+                                <i class="fas fa-eye"></i> Voir Examens
+                            </a>
+                            <a th:href="@{/examens/form(dossierId=${dossier.id})}" 
+                               class="btn btn-warning">
+                                <i class="fas fa-plus"></i> Ajouter Examen
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Allergies</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Gérez les allergies du patient.</p>
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/allergies(dossierId=${dossier.id})}" 
+                               class="btn btn-outline-danger">
+                                <i class="fas fa-eye"></i> Voir Allergies
+                            </a>
+                            <a th:href="@{/allergies/form(dossierId=${dossier.id})}" 
+                               class="btn btn-danger">
+                                <i class="fas fa-plus"></i> Ajouter Allergie
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-clipboard-list"></i> Antécédents</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Gérez les antécédents médicaux.</p>
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/antecedents(dossierId=${dossier.id})}" 
+                               class="btn btn-outline-dark">
+                                <i class="fas fa-eye"></i> Voir Antécédents
+                            </a>
+                            <a th:href="@{/antecedents/form(dossierId=${dossier.id})}" 
+                               class="btn btn-dark">
+                                <i class="fas fa-plus"></i> Ajouter Antécédent
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-notes-medical"></i> Notes Médicales</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Gérez les notes médicales.</p>
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/notes-medicales(dossierId=${dossier.id})}" 
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-eye"></i> Voir Notes
+                            </a>
+                            <a th:href="@{/notes-medicales/form(dossierId=${dossier.id})}" 
+                               class="btn btn-secondary">
+                                <i class="fas fa-plus"></i> Ajouter Note
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

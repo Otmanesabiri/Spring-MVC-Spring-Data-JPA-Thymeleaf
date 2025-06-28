@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nouvelle Prescription</title>
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="container mt-2">
+        <div class="card">
+            <div class="card-header">
+                <h1>Nouvelle Prescription</h1>
+                <p>Patient: <span th:text="${dossier.patient.nom + ' ' + dossier.patient.prenom}"></span></p>
+            </div>
+            <div class="card-body">
+                <!-- Bouton retour -->
+                <div class="mb-3">
+                    <a th:href="@{'/dossier/' + ${dossier.id} + '/prescriptions'}" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left"></i> Retour aux prescriptions
+                    </a>
+                </div>
+
+                <!-- Message d'erreur -->
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <!-- Formulaire -->
+                <form method="post" th:action="@{'/dossier/' + ${dossier.id} + '/prescription/save'}" th:object="${prescription}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Nom du médicament * :</label>
+                                <input type="text" class="form-control" th:field="*{nomMedicament}" 
+                                       placeholder="Nom du médicament">
+                                <span th:if="${#fields.hasErrors('nomMedicament')}" 
+                                      class="text-danger" th:errors="*{nomMedicament}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Dosage * :</label>
+                                <input type="text" class="form-control" th:field="*{dosage}" 
+                                       placeholder="Ex: 500mg, 2 comprimés, etc.">
+                                <span th:if="${#fields.hasErrors('dosage')}" 
+                                      class="text-danger" th:errors="*{dosage}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">Date de prescription :</label>
+                                <input type="date" class="form-control" th:field="*{datePrescription}" 
+                                       title="Date de prescription">
+                                <span th:if="${#fields.hasErrors('datePrescription')}" 
+                                      class="text-danger" th:errors="*{datePrescription}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">Date de fin :</label>
+                                <input type="date" class="form-control" th:field="*{dateFin}" 
+                                       title="Date de fin du traitement">
+                                <span th:if="${#fields.hasErrors('dateFin')}" 
+                                      class="text-danger" th:errors="*{dateFin}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">Statut :</label>
+                                <select class="form-control" th:field="*{statut}" title="Statut de la prescription">
+                                    <option value="">-- Sélectionner --</option>
+                                    <option th:each="statut : ${statutsPrescription}" 
+                                            th:value="${statut}" 
+                                            th:text="${statut.libelle}"></option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('statut')}" 
+                                      class="text-danger" th:errors="*{statut}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Instructions de prise * :</label>
+                        <textarea class="form-control" th:field="*{instructions}" rows="3" 
+                                  placeholder="Instructions détaillées pour la prise du médicament"></textarea>
+                        <span th:if="${#fields.hasErrors('instructions')}" 
+                              class="text-danger" th:errors="*{instructions}"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Fréquence :</label>
+                                <input type="text" class="form-control" th:field="*{frequence}" 
+                                       placeholder="Ex: 3 fois par jour, 1 fois le matin, etc.">
+                                <span th:if="${#fields.hasErrors('frequence')}" 
+                                      class="text-danger" th:errors="*{frequence}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Quantité totale :</label>
+                                <input type="text" class="form-control" th:field="*{quantite}" 
+                                       placeholder="Ex: 30 comprimés, 1 flacon, etc.">
+                                <span th:if="${#fields.hasErrors('quantite')}" 
+                                      class="text-danger" th:errors="*{quantite}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Indications :</label>
+                        <textarea class="form-control" th:field="*{indications}" rows="2" 
+                                  placeholder="Raison médicale de la prescription"></textarea>
+                        <span th:if="${#fields.hasErrors('indications')}" 
+                              class="text-danger" th:errors="*{indications}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Contre-indications/Précautions :</label>
+                        <textarea class="form-control" th:field="*{contreIndications}" rows="2" 
+                                  placeholder="Contre-indications et précautions d'usage"></textarea>
+                        <span th:if="${#fields.hasErrors('contreIndications')}" 
+                              class="text-danger" th:errors="*{contreIndications}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Remarques :</label>
+                        <textarea class="form-control" th:field="*{remarques}" rows="2" 
+                                  placeholder="Remarques particulières"></textarea>
+                        <span th:if="${#fields.hasErrors('remarques')}" 
+                              class="text-danger" th:errors="*{remarques}"></span>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-save"></i> Enregistrer
+                        </button>
+                        <a th:href="@{'/dossier/' + ${dossier.id} + '/prescriptions'}" class="btn btn-secondary ml-2">
+                            <i class="fa fa-times"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

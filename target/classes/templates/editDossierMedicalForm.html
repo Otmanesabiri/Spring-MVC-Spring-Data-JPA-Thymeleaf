@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Modifier un Dossier Médical</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-edit"></i> Modifier le Dossier Médical</h2>
+            </div>
+            <div class="card-body">
+                <!-- Affichage des messages d'erreur -->
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+                </div>
+                
+                <form method="post" th:action="@{/dossiers-medicaux/update}" th:object="${dossierMedical}">
+                    <!-- Champ caché pour l'ID -->
+                    <input type="hidden" th:field="*{id}"/>
+                    <input type="hidden" th:field="*{dateCreation}"/>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="patientId" class="form-label">Patient *</label>
+                                <select class="form-select" name="patientId" id="patientId" 
+                                        title="Sélectionner le patient" required>
+                                    <option value="">-- Sélectionner un patient --</option>
+                                    <option th:each="patient : ${patients}" 
+                                            th:value="${patient.id}"
+                                            th:selected="${patient.id == dossierMedical.patient.id}"
+                                            th:text="${(patient.nom != null and patient.prenom != null) ? patient.nom + ' ' + patient.prenom : patient.name} + ' (ID: ' + patient.id + ')'">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="numeroDossier" class="form-label">Numéro de Dossier *</label>
+                                <input type="text" class="form-control" 
+                                       th:field="*{numeroDossier}" 
+                                       id="numeroDossier"
+                                       placeholder="Numéro du dossier médical"
+                                       title="Numéro du dossier médical"
+                                       required/>
+                                <span th:if="${#fields.hasErrors('numeroDossier')}" 
+                                      th:errors="*{numeroDossier}" 
+                                      class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="dateCreationDisplay" class="form-label">Date de Création</label>
+                                <input type="text" class="form-control" 
+                                       th:value="${#dates.format(dossierMedical.dateCreation, 'dd/MM/yyyy')}"
+                                       id="dateCreationDisplay"
+                                       readonly
+                                       title="Date de création du dossier (non modifiable)"/>
+                                <small class="form-text text-muted">La date de création ne peut pas être modifiée</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="statut" class="form-label">Statut *</label>
+                                <select class="form-select" th:field="*{statut}" id="statut" 
+                                        title="Statut du dossier médical" required>
+                                    <option th:each="statutOption : ${statuts}" 
+                                            th:value="${statutOption}" 
+                                            th:text="${statutOption.libelle}">
+                                    </option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('statut')}" 
+                                      th:errors="*{statut}" 
+                                      class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="notesGenerales" class="form-label">Notes Générales</label>
+                        <textarea class="form-control" rows="4" 
+                                  th:field="*{notesGenerales}" 
+                                  id="notesGenerales"
+                                  placeholder="Notes générales sur le dossier médical..."
+                                  title="Notes générales"></textarea>
+                        <span th:if="${#fields.hasErrors('notesGenerales')}" 
+                              th:errors="*{notesGenerales}" 
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Informations de modification -->
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Information :</strong> 
+                        La modification de ce dossier médical mettra à jour la date de dernière modification.
+                        <span th:if="${dossierMedical.dateDerniereModification != null}">
+                            <br>Dernière modification : <span th:text="${#dates.format(dossierMedical.dateDerniereModification, 'dd/MM/yyyy HH:mm')}"></span>
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a class="btn btn-secondary me-2" 
+                               th:href="@{/dossiers-medicaux(page=${page},keyword=${keyword})}" 
+                               title="Retour à la liste">
+                                <i class="fas fa-arrow-left"></i> Retour
+                            </a>
+                            <a class="btn btn-info" 
+                               th:href="@{/dossiers-medicaux/details(id=${dossierMedical.id})}" 
+                               title="Voir les détails">
+                                <i class="fas fa-eye"></i> Voir Détails
+                            </a>
+                        </div>
+                        <button type="submit" class="btn btn-success" title="Mettre à jour le dossier médical">
+                            <i class="fas fa-save"></i> Mettre à Jour
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

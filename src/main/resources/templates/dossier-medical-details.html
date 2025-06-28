@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Détails du Dossier Médical</title>
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="container mt-2">
+        <div class="card">
+            <div class="card-header">
+                <h1>Dossier Médical - <span th:text="${dossier.patient.nom + ' ' + dossier.patient.prenom}"></span></h1>
+                <p class="mb-0">
+                    <span class="badge bg-primary" th:text="${dossier.statutLibelle}"></span>
+                    <span class="text-muted">| Créé le <span th:text="${#dates.format(dossier.dateCreation, 'dd/MM/yyyy')}"></span></span>
+                </p>
+            </div>
+            <div class="card-body">
+                <!-- Navigation -->
+                <div class="mb-4">
+                    <a th:href="@{/dossiers-medicaux}" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left"></i> Retour aux dossiers
+                    </a>
+                    <a th:href="@{'/dossier-medical/edit/' + ${dossier.id}}" class="btn btn-warning">
+                        <i class="fa fa-edit"></i> Modifier
+                    </a>
+                </div>
+
+                <!-- Informations du patient -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-header">
+                                <h5><i class="fa fa-user"></i> Informations Patient</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Nom :</strong> <span th:text="${dossier.patient.nom}"></span></p>
+                                <p><strong>Prénom :</strong> <span th:text="${dossier.patient.prenom}"></span></p>
+                                <p><strong>Date de naissance :</strong> <span th:text="${#dates.format(dossier.patient.dateNaissance, 'dd/MM/yyyy')}"></span></p>
+                                <p><strong>Email :</strong> <span th:text="${dossier.patient.email}"></span></p>
+                                <p><strong>Téléphone :</strong> <span th:text="${dossier.patient.telephone}"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-header">
+                                <h5><i class="fa fa-folder"></i> Informations Dossier</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Numéro :</strong> <span th:text="${dossier.numeroDossier}"></span></p>
+                                <p><strong>Statut :</strong> <span class="badge bg-primary" th:text="${dossier.statutLibelle}"></span></p>
+                                <p><strong>Date création :</strong> <span th:text="${#dates.format(dossier.dateCreation, 'dd/MM/yyyy HH:mm')}"></span></p>
+                                <p><strong>Dernière modification :</strong> <span th:text="${#dates.format(dossier.dateModification, 'dd/MM/yyyy HH:mm')}"></span></p>
+                                <p th:if="${dossier.notes}"><strong>Notes :</strong> <span th:text="${dossier.notes}"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modules du dossier médical -->
+                <div class="row">
+                    <div class="col-12">
+                        <h3><i class="fa fa-list"></i> Modules du Dossier Médical</h3>
+                        <div class="row">
+                            <!-- Historique Médical -->
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-info">
+                                    <div class="card-body text-center">
+                                        <i class="fa fa-history fa-3x text-info mb-3"></i>
+                                        <h5 class="card-title">Historique Médical</h5>
+                                        <p class="card-text">Consulter l'historique des événements médicaux</p>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/historiques'}" class="btn btn-info">
+                                            <i class="fa fa-eye"></i> Consulter
+                                        </a>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/historique/new'}" class="btn btn-outline-info">
+                                            <i class="fa fa-plus"></i> Ajouter
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Prescriptions -->
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-success">
+                                    <div class="card-body text-center">
+                                        <i class="fa fa-pills fa-3x text-success mb-3"></i>
+                                        <h5 class="card-title">Prescriptions</h5>
+                                        <p class="card-text">Gérer les prescriptions médicamenteuses</p>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/prescriptions'}" class="btn btn-success">
+                                            <i class="fa fa-eye"></i> Consulter
+                                        </a>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/prescription/new'}" class="btn btn-outline-success">
+                                            <i class="fa fa-plus"></i> Ajouter
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Résultats d'Examens -->
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-warning">
+                                    <div class="card-body text-center">
+                                        <i class="fa fa-vial fa-3x text-warning mb-3"></i>
+                                        <h5 class="card-title">Examens</h5>
+                                        <p class="card-text">Consulter les résultats d'examens</p>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/examens'}" class="btn btn-warning">
+                                            <i class="fa fa-eye"></i> Consulter
+                                        </a>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/examen/new'}" class="btn btn-outline-warning">
+                                            <i class="fa fa-plus"></i> Ajouter
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Allergies -->
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-danger">
+                                    <div class="card-body text-center">
+                                        <i class="fa fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                                        <h5 class="card-title">Allergies</h5>
+                                        <p class="card-text">Gérer les allergies du patient</p>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/allergies'}" class="btn btn-danger">
+                                            <i class="fa fa-eye"></i> Consulter
+                                        </a>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/allergie/new'}" class="btn btn-outline-danger">
+                                            <i class="fa fa-plus"></i> Ajouter
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Antécédents -->
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-secondary">
+                                    <div class="card-body text-center">
+                                        <i class="fa fa-family fa-3x text-secondary mb-3"></i>
+                                        <h5 class="card-title">Antécédents</h5>
+                                        <p class="card-text">Gérer les antécédents médicaux</p>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/antecedents'}" class="btn btn-secondary">
+                                            <i class="fa fa-eye"></i> Consulter
+                                        </a>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/antecedent/new'}" class="btn btn-outline-secondary">
+                                            <i class="fa fa-plus"></i> Ajouter
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notes Médicales -->
+                            <div class="col-md-4 mb-3">
+                                <div class="card border-dark">
+                                    <div class="card-body text-center">
+                                        <i class="fa fa-sticky-note fa-3x text-dark mb-3"></i>
+                                        <h5 class="card-title">Notes Médicales</h5>
+                                        <p class="card-text">Consulter les notes médicales</p>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/notes'}" class="btn btn-dark">
+                                            <i class="fa fa-eye"></i> Consulter
+                                        </a>
+                                        <a th:href="@{'/dossier/' + ${dossier.id} + '/note/new'}" class="btn btn-outline-dark">
+                                            <i class="fa fa-plus"></i> Ajouter
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Résumé récent -->
+                <div class="row mt-4" th:if="${recentData}">
+                    <div class="col-12">
+                        <h3><i class="fa fa-clock"></i> Activité Récente</h3>
+                        <div class="row">
+                            <div class="col-md-6" th:if="${recentHistoriques}">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        <h6><i class="fa fa-history"></i> Derniers Événements</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div th:each="historique : ${recentHistoriques}" class="border-bottom pb-2 mb-2">
+                                            <strong th:text="${historique.titre}"></strong><br>
+                                            <small class="text-muted" th:text="${#dates.format(historique.dateEvenement, 'dd/MM/yyyy')}"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" th:if="${recentPrescriptions}">
+                                <div class="card">
+                                    <div class="card-header bg-success text-white">
+                                        <h6><i class="fa fa-pills"></i> Prescriptions Actives</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div th:each="prescription : ${recentPrescriptions}" class="border-bottom pb-2 mb-2">
+                                            <strong th:text="${prescription.nomMedicament}"></strong><br>
+                                            <small class="text-muted" th:text="${prescription.dosage}"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

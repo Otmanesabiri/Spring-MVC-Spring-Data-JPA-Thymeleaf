@@ -29,7 +29,7 @@
                                     <option value="">-- Sélectionner un patient --</option>
                                     <option th:each="patient : ${patients}" 
                                             th:value="${patient.id}" 
-                                            th:text="${patient.name + ' (ID: ' + patient.id + ')'}">
+                                            th:text="${(patient.nom != null and patient.prenom != null) ? patient.nom + ' ' + patient.prenom : patient.name} + ' (ID: ' + patient.id + ')'">
                                     </option>
                                 </select>
                             </div>

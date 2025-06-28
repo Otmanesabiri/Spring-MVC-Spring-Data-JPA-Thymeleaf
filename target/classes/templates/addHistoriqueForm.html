@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ajouter Historique Médical</title>
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="container mt-2">
+        <div class="card">
+            <div class="card-header">
+                <h1>Nouvel Historique Médical</h1>
+                <p>Patient: <span th:text="${dossier.patient.nom + ' ' + dossier.patient.prenom}"></span></p>
+            </div>
+            <div class="card-body">
+                <!-- Bouton retour -->
+                <div class="mb-3">
+                    <a th:href="@{'/dossier/' + ${dossier.id} + '/historiques'}" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left"></i> Retour aux historiques
+                    </a>
+                </div>
+
+                <!-- Message d'erreur -->
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <!-- Formulaire -->
+                <form method="post" th:action="@{'/dossier/' + ${dossier.id} + '/historique/save'}" th:object="${historique}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Type d'événement :</label>
+                                <select class="form-control" th:field="*{typeEvenement}" title="Type d'événement">
+                                    <option value="">-- Sélectionner --</option>
+                                    <option th:each="type : ${typesEvenement}" 
+                                            th:value="${type}" 
+                                            th:text="${type.libelle}"></option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('typeEvenement')}" 
+                                      class="text-danger" th:errors="*{typeEvenement}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Date et heure :</label>
+                                <input type="datetime-local" class="form-control" th:field="*{dateEvenement}" title="Date et heure de l'événement" placeholder="Sélectionnez la date et l'heure">
+                                <span th:if="${#fields.hasErrors('dateEvenement')}" 
+                                      class="text-danger" th:errors="*{dateEvenement}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label class="form-label">Titre :</label>
+                                <input type="text" class="form-control" th:field="*{titre}" placeholder="Titre de l'événement">
+                                <span th:if="${#fields.hasErrors('titre')}" 
+                                      class="text-danger" th:errors="*{titre}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">Niveau de gravité :</label>
+                                <select class="form-control" th:field="*{niveauGravite}" title="Niveau de gravité">
+                                    <option value="">-- Sélectionner --</option>
+                                    <option th:each="gravite : ${niveauxGravite}" 
+                                            th:value="${gravite}" 
+                                            th:text="${gravite.libelle}"></option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('niveauGravite')}" 
+                                      class="text-danger" th:errors="*{niveauGravite}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description :</label>
+                        <textarea class="form-control" th:field="*{description}" rows="4" 
+                                  placeholder="Description détaillée de l'événement médical"></textarea>
+                        <span th:if="${#fields.hasErrors('description')}" 
+                              class="text-danger" th:errors="*{description}"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Résultats/Observations :</label>
+                                <textarea class="form-control" th:field="*{resultats}" rows="3" 
+                                          placeholder="Résultats d'examens, observations..."></textarea>
+                                <span th:if="${#fields.hasErrors('resultats')}" 
+                                      class="text-danger" th:errors="*{resultats}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Recommandations :</label>
+                                <textarea class="form-control" th:field="*{recommandations}" rows="3" 
+                                          placeholder="Recommandations pour le suivi..."></textarea>
+                                <span th:if="${#fields.hasErrors('recommandations')}" 
+                                      class="text-danger" th:errors="*{recommandations}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Fichiers/Documents attachés :</label>
+                        <input type="text" class="form-control" th:field="*{documentsAttaches}" 
+                               placeholder="Liens vers les documents (séparés par des virgules)">
+                        <small class="form-text text-muted">URLs vers les fichiers de résultats, images, etc.</small>
+                        <span th:if="${#fields.hasErrors('documentsAttaches')}" 
+                              class="text-danger" th:errors="*{documentsAttaches}"></span>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-save"></i> Enregistrer
+                        </button>
+                        <a th:href="@{'/dossier/' + ${dossier.id} + '/historiques'}" class="btn btn-secondary ml-2">
+                            <i class="fa fa-times"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

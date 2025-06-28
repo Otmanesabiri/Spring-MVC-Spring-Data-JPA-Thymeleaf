@@ -43,17 +43,18 @@ public class HospitalAppApplication {
                            PasswordEncoder passwordEncoder) {
         return args -> {
             // Add sample data for patients
-            patientRepository.save(new Patient(null, "Hassan", new Date(), true, 120));
-            patientRepository.save(new Patient(null, "Mohammed", new Date(), false, 321));
-            patientRepository.save(new Patient(null, "Yasmine", new Date(), true, 165));
-            patientRepository.save(new Patient(null, "Hanae", new Date(), false, 132));
+            patientRepository.save(new Patient(null, "Hassan", "Alami", "Hassan", "hassan.alami@email.com", "0612345678", new Date(), true, 120));
+            patientRepository.save(new Patient(null, "Mohammed", "Benjelloun", "Mohammed", "mohammed.benjelloun@email.com", "0623456789", new Date(), false, 321));
+            patientRepository.save(new Patient(null, "Yasmine", "Kabbaj", "Yasmine", "yasmine.kabbaj@email.com", "0634567890", new Date(), true, 165));
+            patientRepository.save(new Patient(null, "Hanae", "Chraibi", "Hanae", "hanae.chraibi@email.com", "0645678901", new Date(), false, 132));
 
             // Add more patients for pagination testing
             // Modified to ensure scores are at least 100 (meeting the @Min(100) constraint)
             for (int i = 0; i < 20; i++) {
                 // Generate random scores between 100-199 instead of 0-99
                 int score = 100 + (int)(Math.random() * 100);
-                patientRepository.save(new Patient(null, "Patient " + i, new Date(), Math.random() > 0.5, score));
+                patientRepository.save(new Patient(null, "Patient " + i, "Nom" + i, "Prenom" + i, 
+                    "patient" + i + "@email.com", "06" + String.format("%08d", i), new Date(), Math.random() > 0.5, score));
             }
             
             // Initialize roles
