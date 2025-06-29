@@ -6,11 +6,13 @@
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/DossierMedicalServiceImpl.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/repositories/PersonnelAdministratifRepository.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/HistoriqueMedical.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/controllers/HomeController.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/Technicien.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/NoteMedicaleServiceImpl.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/ConsultationServiceImpl.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/controllers/PatientController.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/SeveriteAntecedent.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/TypeConsultation.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/CreneauHoraireServiceImpl.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/AppUser.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/Medecin.java
@@ -35,6 +37,7 @@
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/repositories/CreneauHoraireRepository.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/AllergieService.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/CreneauHoraireService.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/TypeSuivi.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/NoteMedicaleService.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/repositories/AppRoleRepository.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/controllers/TechnicienController.java
@@ -42,8 +45,10 @@
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/PatientService.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/RendezVousService.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/PrescriptionService.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/controllers/SuiviConsultationController.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/MedecinServiceImpl.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/repositories/DossierMedicalRepository.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/repositories/SuiviConsultationRepository.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/InfirmierService.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/Allergie.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/NiveauConfidentialite.java
@@ -54,6 +59,7 @@
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/AllergieServiceImpl.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/UserDetailsServiceImpl.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/TypeAllergie.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/SuiviDashboardStats.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/PrescriptionServiceImpl.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/HoraireTravail.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/StatutEmploye.java
@@ -63,6 +69,7 @@
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/MedecinService.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/StatutPrescription.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/TypeTechnicien.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/SuiviConsultation.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/StatutConsultation.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/controllers/DossierMedicalController.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/CreneauHoraire.java
@@ -75,12 +82,15 @@
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/HospitalAppApplication.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/repositories/PatientRepository.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/NiveauAcces.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/ConsultationDashboardStats.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/repositories/RendezVousRepository.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/AppRole.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/ConsultationService.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/controllers/RendezVousController.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/Antecedent.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/config/DataInitializer.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/SuiviConsultationServiceImpl.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/SuiviConsultationService.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/repositories/PrescriptionRepository.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/NiveauGravite.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/PersonnelAdministratif.java
@@ -95,7 +105,9 @@
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/controllers/ResultatExamenController.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/PersonnelAdministratifService.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/controllers/InfirmierController.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/StatutSuivi.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/services/DossierMedicalService.java
+/home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/NiveauUrgence.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/TypeRendezVous.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/entities/NoteMedicale.java
 /home/red/Documents/GitHub/Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf/src/main/java/ma/enset/hospitalapp/repositories/AntecedentRepository.java

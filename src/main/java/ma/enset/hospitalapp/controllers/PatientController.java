@@ -23,10 +23,10 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/patients";
-    }
+//    @GetMapping("/")
+//    public String home() {
+//        return "redirect:/patients";
+//    }
 
     @GetMapping("/patients")
     public String patients(Model model,

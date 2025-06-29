@@ -1,18 +1,25 @@
 ma/enset/hospitalapp/controllers/DossierMedicalController.class
+ma/enset/hospitalapp/entities/TypeSuivi.class
 ma/enset/hospitalapp/entities/HoraireTravail.class
 ma/enset/hospitalapp/services/InfirmierServiceImpl.class
 ma/enset/hospitalapp/entities/StatutDossier.class
 ma/enset/hospitalapp/repositories/TechnicienRepository.class
 ma/enset/hospitalapp/controllers/AllergieController.class
+ma/enset/hospitalapp/entities/StatutSuivi.class
 ma/enset/hospitalapp/entities/PersonnelAdministratif.class
+ma/enset/hospitalapp/controllers/SuiviConsultationController.class
 ma/enset/hospitalapp/entities/DossierMedical.class
 ma/enset/hospitalapp/repositories/ResultatExamenRepository.class
 ma/enset/hospitalapp/services/AllergieService.class
 ma/enset/hospitalapp/controllers/InfirmierController.class
 ma/enset/hospitalapp/entities/TypeNote.class
 ma/enset/hospitalapp/services/ConsultationServiceImpl.class
+ma/enset/hospitalapp/entities/SuiviDashboardStats.class
+ma/enset/hospitalapp/entities/ConsultationDashboardStats.class
+ma/enset/hospitalapp/services/SuiviConsultationServiceImpl.class
 ma/enset/hospitalapp/HospitalAppApplication.class
 ma/enset/hospitalapp/controllers/PrescriptionController.class
+ma/enset/hospitalapp/entities/NiveauUrgence.class
 ma/enset/hospitalapp/repositories/PatientRepository.class
 ma/enset/hospitalapp/entities/StatutPrescription.class
 ma/enset/hospitalapp/controllers/NoteMedicaleController.class
@@ -42,6 +49,7 @@ ma/enset/hospitalapp/services/ResultatExamenService.class
 ma/enset/hospitalapp/services/HistoriqueMedicalService.class
 ma/enset/hospitalapp/controllers/ConsultationController.class
 ma/enset/hospitalapp/repositories/CreneauHoraireRepository.class
+ma/enset/hospitalapp/entities/SuiviConsultation.class
 ma/enset/hospitalapp/services/CreneauHoraireService.class
 ma/enset/hospitalapp/services/PatientServiceImpl.class
 ma/enset/hospitalapp/entities/StatutRendezVous.class
@@ -51,6 +59,7 @@ ma/enset/hospitalapp/entities/AppRole.class
 ma/enset/hospitalapp/controllers/RendezVousController.class
 ma/enset/hospitalapp/entities/CreneauHoraire.class
 ma/enset/hospitalapp/services/NoteMedicaleServiceImpl.class
+ma/enset/hospitalapp/controllers/HomeController.class
 ma/enset/hospitalapp/services/PatientService.class
 ma/enset/hospitalapp/services/CreneauHoraireServiceImpl.class
 ma/enset/hospitalapp/services/PrescriptionServiceImpl.class
@@ -68,6 +77,7 @@ ma/enset/hospitalapp/config/DataInitializer.class
 ma/enset/hospitalapp/entities/Prescription.class
 ma/enset/hospitalapp/repositories/DossierMedicalRepository.class
 ma/enset/hospitalapp/services/MedecinService.class
+ma/enset/hospitalapp/entities/TypeConsultation.class
 ma/enset/hospitalapp/services/DossierMedicalService.class
 ma/enset/hospitalapp/repositories/AntecedentRepository.class
 ma/enset/hospitalapp/entities/TypeRendezVous.class
@@ -77,6 +87,7 @@ ma/enset/hospitalapp/entities/EquipeType.class
 ma/enset/hospitalapp/repositories/NoteMedicaleRepository.class
 ma/enset/hospitalapp/services/PersonnelAdministratifService.class
 ma/enset/hospitalapp/services/ConsultationService.class
+ma/enset/hospitalapp/repositories/SuiviConsultationRepository.class
 ma/enset/hospitalapp/repositories/ConsultationRepository.class
 ma/enset/hospitalapp/services/RendezVousService.class
 ma/enset/hospitalapp/services/PersonnelAdministratifServiceImpl.class
@@ -99,5 +110,6 @@ ma/enset/hospitalapp/entities/StatutConsultation.class
 ma/enset/hospitalapp/controllers/AntecedentController.class
 ma/enset/hospitalapp/entities/NiveauGravite.class
 ma/enset/hospitalapp/services/PrescriptionService.class
+ma/enset/hospitalapp/services/SuiviConsultationService.class
 ma/enset/hospitalapp/services/TechnicienServiceImpl.class
 ma/enset/hospitalapp/entities/NoteMedicale.class

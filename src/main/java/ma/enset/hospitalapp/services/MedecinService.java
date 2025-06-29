@@ -1,25 +1,23 @@
 package ma.enset.hospitalapp.services;
 
 import ma.enset.hospitalapp.entities.Medecin;
-import ma.enset.hospitalapp.entities.StatutMedecin;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MedecinService {
-    Medecin getMedecin(Long id);
-    Page<Medecin> findAllMedecins(Pageable pageable);
-    Page<Medecin> findMedecinsByNom(String nom, Pageable pageable);
-    Page<Medecin> findMedecinsBySpecialite(String specialite, Pageable pageable);
-    Page<Medecin> findMedecinsByStatut(StatutMedecin statut, Pageable pageable);
-    Page<Medecin> findActiveMedecins(Pageable pageable);
-    Page<Medecin> findMedecinsByKeyword(String keyword, Pageable pageable);
     Medecin saveMedecin(Medecin medecin);
+    Medecin getMedecin(Long id);
+    List<Medecin> getAllMedecins();
+    Page<Medecin> findAllMedecins(Pageable pageable);
+    Page<Medecin> findMedecinsByName(String name, Pageable pageable);
+    Page<Medecin> findMedecinsByKeyword(String keyword, Pageable pageable);
+    Page<Medecin> findMedecinsBySpecialite(String specialite, Pageable pageable);
     void deleteMedecin(Long id);
-    void activerMedecin(Long id);
-    void desactiverMedecin(Long id);
-    List<Medecin> getMedecinsBySpecialite(String specialite);
+    Medecin activerMedecin(Long id);
+    Medecin desactiverMedecin(Long id);
     long countActiveMedecins();
-    List<Object[]> getStatistiquesBySpecialite();
+    Map<String, Long> getStatistiquesBySpecialite();
 }

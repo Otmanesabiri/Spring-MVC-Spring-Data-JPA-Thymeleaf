@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestion des Suivis Consultation</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3><i class="fas fa-clipboard-check"></i> Gestion des Suivis Post-Consultation</h3>
+            <div class="d-flex gap-2">
+                <a th:href="@{/suivis/dashboard}" class="btn btn-info btn-sm">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a th:href="@{/consultations}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Consultations
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Filtres de recherche -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <form method="get" th:action="@{/suivis}" class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" name="keyword" class="form-control"
+                                   placeholder="Rechercher par personnel, observations..." th:value="${keyword}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="statutSelect" class="visually-hidden">Statut du suivi</label>
+                            <select id="statutSelect" name="statut" class="form-select">
+                                <option value="">Tous les statuts</option>
+                                <option th:each="statut : ${statutsSuivi}"
+                                        th:value="${statut}"
+                                        th:text="${statut.libelle}"
+                                        th:selected="${statut == selectedStatut}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="typeSelect" class="visually-hidden">Type de suivi</label>
+                            <select id="typeSelect" name="type" class="form-select">
+                                <option value="">Tous les types</option>
+                                <option th:each="type : ${typesSuivi}"
+                                        th:value="${type}"
+                                        th:text="${type.libelle}"
+                                        th:selected="${type == selectedType}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100" type="submit">
+                                <i class="fa fa-search"></i> Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <a th:href="@{/suivis/add}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Nouveau Suivi
+                    </a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog"></i> Actions
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-download"></i> Exporter</a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-print"></i> Imprimer</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages d'alerte -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer l'alerte"></button>
+            </div>
+
+            <!-- Statistiques rapides -->
+            <div th:if="${stats}" class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h4 th:text="${stats.totalSuivis}">0</h4>
+                            <small>Total Suivis</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h4 th:text="${stats.suivisAmelioration}">0</h4>
+                            <small>Améliorations</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body text-center">
+                            <h4 th:text="${stats.suivisEnCours}">0</h4>
+                            <small>En Cours</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body text-center">
+                            <h4 th:text="${stats.suivisDeterioration}">0</h4>
+                            <small>Détériorations</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table des suivis -->
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Consultation</th>
+                        <th>Type Suivi</th>
+                        <th>Date Suivi</th>
+                        <th>Personnel</th>
+                        <th>Statut</th>
+                        <th>Prochain RDV</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="suivi : ${listSuivis}" 
+                        th:class="${suivi.statutSuivi.name() == 'DETERIORATION' ? 'table-danger' : 
+                                  suivi.statutSuivi.name() == 'AMELIORATION' ? 'table-success' : ''}">
+                        <td th:text="${suivi.id}"></td>
+                        <td>
+                            <strong th:text="${suivi.patientNomComplet}"></strong><br>
+                            <small class="text-muted" th:text="${suivi.consultation.patient.email}"></small>
+                        </td>
+                        <td>
+                            <span class="badge bg-info" th:text="${suivi.consultation.type != null ? suivi.consultation.type.name() : 'N/A'}"></span><br>
+                            <small th:text="${#temporals.format(suivi.consultation.dateHeureConsultation, 'dd/MM/yyyy')}"></small>
+                        </td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${suivi.typeSuivi.name() == 'CONTROLE_URGENT' ? 'bg-danger' : 
+                                                  (suivi.typeSuivi.name() == 'CONTROLE_ROUTINE' ? 'bg-primary' : 'bg-secondary')}"
+                                  th:text="${suivi.typeSuivi != null ? suivi.typeSuivi.name() : 'N/A'}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${#temporals.format(suivi.dateSuivi, 'dd/MM/yyyy HH:mm')}"></span>
+                        </td>
+                        <td th:text="${suivi.personnel}"></td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${suivi.statutSuivi.name() == 'TERMINE' ? 'bg-success' : 
+                                                  (suivi.statutSuivi.name() == 'EN_COURS' ? 'bg-primary' :
+                                                  (suivi.statutSuivi.name() == 'DETERIORATION' ? 'bg-danger' :
+                                                  (suivi.statutSuivi.name() == 'AMELIORATION' ? 'bg-success' : 'bg-secondary')))}"
+                                  th:text="${suivi.statutSuivi != null ? suivi.statutSuivi.name() : 'N/A'}"></span>
+                        </td>
+                        <td>
+                            <span th:if="${suivi.prochainRendezVous}" 
+                                  th:text="${#temporals.format(suivi.prochainRendezVous, 'dd/MM/yyyy HH:mm')}"></span>
+                            <span th:unless="${suivi.prochainRendezVous}" class="text-muted">-</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a th:href="@{/suivis/details/{id}(id=${suivi.id})}" 
+                                   class="btn btn-outline-info" title="Détails">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a th:href="@{/suivis/edit/{id}(id=${suivi.id})}" 
+                                   class="btn btn-outline-warning" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-outline-success" 
+                                                                        th:if="${suivi.statutSuivi.name() != 'TERMINE'}"
+                                                                        th:onclick="'terminerSuivi(' + ${suivi.id} + ')'" title="Marquer comme terminé">
+                                                                    <i class="fas fa-check"></i>
+                                                                </button>
+                                <button type="button" class="btn btn-outline-danger" 
+                                                                        th:onclick="'confirmerSuppression(' + ${suivi.id} + ', \'' + ${suivi.patientNomComplet} + '\')'"
+                                                                        title="Supprimer">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(listSuivis)}">
+                        <td colspan="9" class="text-center text-muted py-4">
+                            <i class="fas fa-search fa-2x"></i><br>
+                            Aucun suivi trouvé
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <nav th:if="${totalPages != null and totalPages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/suivis(page=${currentPage - 1}, keyword=${keyword}, type=${selectedType}, statut=${selectedStatut})}">
+                            Précédent
+                        </a>
+                    </li>
+                    
+                    <li class="page-item" th:each="page : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${page == currentPage ? 'active' : ''}">
+                        <a class="page-link" 
+                           th:href="@{/suivis(page=${page}, keyword=${keyword}, type=${selectedType}, statut=${selectedStatut})}"
+                           th:text="${page + 1}"></a>
+                    </li>
+                    
+                    <li class="page-item" th:classappend="${currentPage == (totalPages - 1) ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/suivis(page=${currentPage + 1}, keyword=${keyword}, type=${selectedType}, statut=${selectedStatut})}">
+                            Suivant
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmer la suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" title="Fermer" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer le suivi pour <strong id="patientName"></strong> ?</p>
+                <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <a id="confirmDeleteLink" href="#" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Supprimer
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script layout:fragment="scripts">
+function confirmerSuppression(suiviId, patientName) {
+    document.getElementById('patientName').textContent = patientName;
+    document.getElementById('confirmDeleteLink').href = '/suivis/delete/' + suiviId;
+    new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();
+}
+
+function terminerSuivi(suiviId) {
+    if (confirm('Marquer ce suivi comme terminé ?')) {
+        fetch('/suivis/terminer/' + suiviId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Erreur lors de la mise à jour du suivi');
+            }
+        });
+    }
+}
+</script>
+</body>
+</html>

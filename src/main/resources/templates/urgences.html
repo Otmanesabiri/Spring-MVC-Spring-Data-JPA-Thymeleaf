@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urgences - Consultations</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+            <h3><i class="fas fa-exclamation-triangle"></i> Urgences en attente</h3>
+            <a th:href="@{/consultations}" class="btn btn-light btn-sm">
+                <i class="fas fa-arrow-left"></i> Retour aux consultations
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Message si aucune urgence -->
+            <div th:if="${#lists.isEmpty(urgences)}" class="alert alert-success text-center">
+                <h5>Aucune urgence en attente</h5>
+                <p>Il n'y a actuellement aucune consultation d'urgence de niveau élevé ou critique en attente.</p>
+            </div>
+            <!-- Tableau des urgences -->
+            <div th:unless="${#lists.isEmpty(urgences)}">
+                <p>Nombre d'urgences (niveau élevé ou critique) : <span th:text="${#lists.size(urgences)}"></span></p>
+                <table class="table table-striped">
+                    <thead class="table-danger">
+                    <tr>
+                        <th>#</th>
+                        <th>Date/Heure</th>
+                        <th>Patient</th>
+                        <th>Médecin</th>
+                        <th>Niveau d'urgence</th>
+                        <th>Statut</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="consultation,iter : ${urgences}">
+                        <td th:text="${iter.index + 1}"></td>
+                        <td th:text="${#temporals.format(consultation.dateHeureConsultation, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${consultation.patient != null ? consultation.patient.nom + ' ' + consultation.patient.prenom : 'N/A'}"></td>
+                        <td th:text="${consultation.medecin != null ? consultation.medecin : 'N/A'}"></td>
+                        <td>
+                            <span th:text="${consultation.niveauUrgence}" class="badge bg-danger"></span>
+                        </td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${consultation.statut != null && consultation.statut.name() == 'PROGRAMMEE' ? 'bg-info' :
+                                                   consultation.statut != null && consultation.statut.name() == 'EN_COURS' ? 'bg-warning text-dark' : 'bg-secondary'}"
+                                  th:text="${consultation.statut != null ? consultation.statut : 'Non défini'}">
+                            </span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/consultations/details/' + ${consultation.id}}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye"></i> Détails
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

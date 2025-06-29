@@ -4,6 +4,7 @@
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Edit Patient</title>
 </head>
 <body>
@@ -16,21 +17,21 @@
 
                 <div class="mb-3">
                     <label class="form-label">Name</label>
-                    <input type="text" class="form-control" th:field="*{name}">
+                    <input type="text" class="form-control" th:field="*{name}" title="Enter patient name" placeholder="Enter patient name">
                     <span class="text-danger" th:errors="*{name}"></span>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Birth Date</label>
-                    <input type="date" class="form-control" th:field="*{dateNaissance}">
+                    <input type="date" class="form-control" th:field="*{dateNaissance}" title="Enter birth date" placeholder="YYYY-MM-DD">
                     <span class="text-danger" th:errors="*{dateNaissance}"></span>
                 </div>
                 <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" th:field="*{malade}">
-                    <label class="form-check-label">Sick</label>
+                    <input type="checkbox" class="form-check-input" th:field="*{malade}" id="maladeCheckbox" title="Check if the patient is sick">
+                    <label class="form-check-label" for="maladeCheckbox">Sick</label>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Score</label>
-                    <input type="number" class="form-control" th:field="*{score}">
+                    <input type="number" class="form-control" th:field="*{score}" title="Enter patient score" placeholder="Enter patient score">
                     <span class="text-danger" th:errors="*{score}"></span>
                 </div>
                 <div class="d-flex justify-content-between">

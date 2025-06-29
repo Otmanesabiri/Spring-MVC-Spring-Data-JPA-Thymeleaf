@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="layout">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Modifier une Consultation</title>
+    <title>Modifier Consultation</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -14,41 +14,35 @@
                 <h2>Modifier la Consultation</h2>
             </div>
             <div class="card-body">
-                <!-- Affichage des messages d'erreur -->
-                <div th:if="${error}" class="alert alert-danger" role="alert">
-                    <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+                <!-- Messages d'erreur -->
+                <div th:if="${error}" class="alert alert-danger">
+                    <span th:text="${error}"></span>
                 </div>
-                
-                <form method="post" th:action="@{/consultations/save}" th:object="${consultation}">
-                    <input type="hidden" th:field="*{id}"/>
-                    <input type="hidden" th:name="page" th:value="${page}"/>
-                    <input type="hidden" th:name="keyword" th:value="${keyword}"/>
+
+                <form method="post" th:action="@{/consultations/update}">
+                    <input type="hidden" name="id" th:value="${consultation.id}"/>
+                    <input type="hidden" name="page" th:value="${page}"/>
+                    <input type="hidden" name="keyword" th:value="${keyword}"/>
                     
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="dateConsultation" class="form-label">Date et Heure de Consultation *</label>
+                                <label for="dateHeureConsultation" class="form-label">Date et Heure de Consultation *</label>
                                 <input type="datetime-local" class="form-control" 
-                                       th:field="*{dateConsultation}" 
-                                       id="dateConsultation"
-                                       placeholder="Sélectionner la date et l'heure"
-                                       title="Date et heure de la consultation"
-                                       required/>
-                                <span th:if="${#fields.hasErrors('dateConsultation')}" 
-                                      th:errors="*{dateConsultation}" 
-                                      class="text-danger"></span>
+                                       name="dateHeureConsultation"
+                                       th:value="${consultation.dateHeureConsultation != null ? #strings.concat(#temporals.format(consultation.dateHeureConsultation, 'yyyy-MM-dd'), 'T', #temporals.format(consultation.dateHeureConsultation, 'HH:mm')) : ''}"
+                                       id="dateHeureConsultation" required/>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="patientId" class="form-label">Patient *</label>
-                                <select class="form-select" name="patientId" id="patientId" 
-                                        title="Sélectionner le patient" required>
+                                <select class="form-select" name="patientId" id="patientId" required>
                                     <option value="">-- Sélectionner un patient --</option>
                                     <option th:each="patient : ${patients}" 
                                             th:value="${patient.id}" 
-                                            th:selected="${patient.id == consultation.patient.id}"
-                                            th:text="${patient.name + ' (ID: ' + patient.id + ')'}">
+                                            th:selected="${consultation.patient != null && patient.id == consultation.patient.id}"
+                                            th:text="${patient.nom + ' ' + patient.prenom + ' (ID: ' + patient.id + ')'}">
                                     </option>
                                 </select>
                             </div>
@@ -58,31 +52,53 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="medecinId" class="form-label">Médecin *</label>
-                                <select class="form-select" name="medecinId" id="medecinId" 
-                                        title="Sélectionner le médecin" required>
-                                    <option value="">-- Sélectionner un médecin --</option>
-                                    <option th:each="medecin : ${medecins}" 
-                                            th:value="${medecin.id}" 
-                                            th:selected="${medecin.id == consultation.medecin.id}"
-                                            th:text="${'Dr. ' + medecin.nom + ' ' + medecin.prenom + ' (' + medecin.specialite + ')'}">
+                                <label for="medecin" class="form-label">Médecin *</label>
+                                <input type="text" class="form-control"
+                                       name="medecin"
+                                       th:value="${consultation.medecin}"
+                                       id="medecin" required
+                                       placeholder="Nom du médecin"/>
+                                <small class="form-text text-muted">Nom complet du médecin</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="type" class="form-label">Type de Consultation *</label>
+                                <select class="form-select" name="type" id="type" required>
+                                    <option value="">-- Sélectionner un type --</option>
+                                    <option th:each="type : ${types}" 
+                                            th:value="${type.name()}"
+                                            th:text="${type.libelle}"
+                                            th:selected="${type == consultation.type}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="statut" class="form-label">Statut</label>
+                                <select class="form-select" name="statut" id="statut">
+                                    <option th:each="statut : ${statuts}"
+                                            th:value="${statut.name()}"
+                                            th:text="${statut.name()}"
+                                            th:selected="${statut == consultation.statut}">
                                     </option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="statut" class="form-label">Statut</label>
-                                <select class="form-select" th:field="*{statut}" id="statut" 
-                                        title="Statut de la consultation">
-                                    <option th:each="statut : ${statuts}" 
-                                            th:value="${statut}" 
-                                            th:text="${statut.libelle}">
+                                <label for="niveauUrgence" class="form-label">Niveau d'Urgence *</label>
+                                <select class="form-select" name="niveauUrgence" id="niveauUrgence" required>
+                                    <option th:each="urgence : ${niveauxUrgence}"
+                                            th:value="${urgence.name()}"
+                                            th:text="${urgence.name()}"
+                                            th:selected="${urgence == consultation.niveauUrgence}">
                                     </option>
                                 </select>
-                                <span th:if="${#fields.hasErrors('statut')}" 
-                                      th:errors="*{statut}" 
-                                      class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -92,22 +108,18 @@
                             <div class="form-group mb-3">
                                 <label for="tarif" class="form-label">Tarif (MAD)</label>
                                 <input type="number" step="0.01" min="0" class="form-control" 
-                                       th:field="*{tarif}" 
-                                       id="tarif"
-                                       placeholder="Tarif de la consultation"
-                                       title="Tarif en dirhams"/>
-                                <span th:if="${#fields.hasErrors('tarif')}" 
-                                      th:errors="*{tarif}" 
-                                      class="text-danger"></span>
+                                       name="tarif"
+                                       th:value="${consultation.tarif}"
+                                       id="tarif"/>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <div class="form-check mt-4">
                                     <input class="form-check-input" type="checkbox" 
-                                           th:field="*{payee}" 
-                                           id="payee"
-                                           title="Consultation payée">
+                                           name="payee"
+                                           th:checked="${consultation.payee}"
+                                           id="payee">
                                     <label class="form-check-label" for="payee">
                                         Consultation payée
                                     </label>
@@ -119,59 +131,42 @@
                     <div class="form-group mb-3">
                         <label for="motifConsultation" class="form-label">Motif de Consultation</label>
                         <textarea class="form-control" rows="3" 
-                                  th:field="*{motifConsultation}" 
+                                  name="motifConsultation"
                                   id="motifConsultation"
-                                  placeholder="Motif de la consultation..."
-                                  title="Motif de la consultation"></textarea>
-                        <span th:if="${#fields.hasErrors('motifConsultation')}" 
-                              th:errors="*{motifConsultation}" 
-                              class="text-danger"></span>
+                                  th:text="${consultation.motifConsultation}"></textarea>
                     </div>
 
                     <div class="form-group mb-3">
                         <label for="diagnostic" class="form-label">Diagnostic</label>
                         <textarea class="form-control" rows="3" 
-                                  th:field="*{diagnostic}" 
+                                  name="diagnostic"
                                   id="diagnostic"
-                                  placeholder="Diagnostic médical..."
-                                  title="Diagnostic médical"></textarea>
-                        <span th:if="${#fields.hasErrors('diagnostic')}" 
-                              th:errors="*{diagnostic}" 
-                              class="text-danger"></span>
+                                  th:text="${consultation.diagnostic}"></textarea>
                     </div>
 
                     <div class="form-group mb-3">
                         <label for="traitement" class="form-label">Traitement</label>
                         <textarea class="form-control" rows="3" 
-                                  th:field="*{traitement}" 
+                                  name="traitement"
                                   id="traitement"
-                                  placeholder="Traitement prescrit..."
-                                  title="Traitement prescrit"></textarea>
-                        <span th:if="${#fields.hasErrors('traitement')}" 
-                              th:errors="*{traitement}" 
-                              class="text-danger"></span>
+                                  th:text="${consultation.traitement}"></textarea>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="observations" class="form-label">Observations</label>
+                        <label for="observationsInfirmiere" class="form-label">Observations Infirmière</label>
                         <textarea class="form-control" rows="2" 
-                                  th:field="*{observations}" 
-                                  id="observations"
-                                  placeholder="Observations particulières..."
-                                  title="Observations particulières"></textarea>
-                        <span th:if="${#fields.hasErrors('observations')}" 
-                              th:errors="*{observations}" 
-                              class="text-danger"></span>
+                                  name="observationsInfirmiere"
+                                  id="observationsInfirmiere"
+                                  th:text="${consultation.observationsInfirmiere}"></textarea>
                     </div>
 
                     <div class="d-flex justify-content-between">
                         <a class="btn btn-secondary" 
-                           th:href="@{/consultations(page=${page}, keyword=${keyword})}" 
-                           title="Retour à la liste">
+                           th:href="@{/consultations(page=${page}, keyword=${keyword})}">
                             <i class="fas fa-arrow-left"></i> Retour
                         </a>
-                        <button type="submit" class="btn btn-success" title="Enregistrer les modifications">
-                            <i class="fas fa-save"></i> Enregistrer
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Modifier
                         </button>
                     </div>
                 </form>

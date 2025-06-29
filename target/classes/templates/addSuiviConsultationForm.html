@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nouveau Suivi Post-Consultation</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-plus-circle"></i> Nouveau Suivi Post-Consultation</h3>
+        </div>
+        <div class="card-body">
+            <!-- Messages d'alerte -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+
+            <form th:action="@{/suivis/save}" method="post" th:object="${suivi}">
+                <div class="row">
+                    <!-- Sélection de la consultation -->
+                    <div class="col-md-6 mb-3">
+                        <label for="consultationId" class="form-label">
+                            <i class="fas fa-stethoscope"></i> Consultation *
+                        </label>
+                        <select id="consultationId" name="consultationId" class="form-select" required>
+                            <option value="">Sélectionner une consultation terminée...</option>
+                            <option th:each="consultation : ${consultations}"
+                                    th:value="${consultation.id}"
+                                    th:text="${consultation.patientNomComplet + ' - ' + consultation.type.libelle + ' (' + #temporals.format(consultation.dateHeureConsultation, 'dd/MM/yyyy') + ')'}"
+                                    th:selected="${selectedConsultation != null and selectedConsultation.id == consultation.id}">
+                            </option>
+                        </select>
+                        <div class="form-text">Sélectionnez la consultation pour laquelle créer un suivi</div>
+                    </div>
+
+                    <!-- Type de suivi -->
+                    <div class="col-md-6 mb-3">
+                        <label for="typeSuivi" class="form-label">
+                            <i class="fas fa-clipboard-list"></i> Type de Suivi *
+                        </label>
+                        <select id="typeSuivi" th:field="*{typeSuivi}" class="form-select" required>
+                            <option value="">Sélectionner le type...</option>
+                            <option th:each="type : ${typesSuivi}"
+                                    th:value="${type}"
+                                    th:text="${type.libelle}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Personnel responsable -->
+                    <div class="col-md-6 mb-3">
+                        <label for="personnel" class="form-label">
+                            <i class="fas fa-user-md"></i> Personnel Responsable *
+                        </label>
+                        <input type="text" th:field="*{personnel}" class="form-control" id="personnel" 
+                               placeholder="Nom du personnel médical" required maxlength="100">
+                        <div class="form-text">Médecin ou infirmier responsable du suivi</div>
+                    </div>
+
+                    <!-- Statut -->
+                    <div class="col-md-6 mb-3">
+                        <label for="statutSuivi" class="form-label">
+                            <i class="fas fa-flag"></i> Statut
+                        </label>
+                        <select id="statutSuivi" th:field="*{statutSuivi}" class="form-select">
+                            <option th:each="statut : ${statutsSuivi}"
+                                    th:value="${statut}"
+                                    th:text="${statut.libelle}"
+                                    th:selected="${statut.name() == 'EN_COURS'}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Observations -->
+                <div class="mb-3">
+                    <label for="observations" class="form-label">
+                        <i class="fas fa-notes-medical"></i> Observations *
+                    </label>
+                    <textarea th:field="*{observations}" class="form-control" id="observations" 
+                              rows="4" placeholder="Observations détaillées sur l'état du patient..." 
+                              required maxlength="2000"></textarea>
+                    <div class="form-text">Décrivez l'évolution de l'état du patient</div>
+                </div>
+
+                <!-- Actions prises -->
+                <div class="mb-3">
+                    <label for="actions" class="form-label">
+                        <i class="fas fa-tasks"></i> Actions Prises
+                    </label>
+                    <textarea th:field="*{actions}" class="form-control" id="actions" 
+                              rows="3" placeholder="Actions prises lors du suivi..." 
+                              maxlength="1000"></textarea>
+                    <div class="form-text">Traitements administrés, examens prescrits, etc.</div>
+                </div>
+
+                <!-- Données vitales -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6><i class="fas fa-heartbeat"></i> Données Vitales (optionnel)</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="tension" class="form-label">Tension (mmHg)</label>
+                                <input type="number" th:field="*{tension}" class="form-control" id="tension" 
+                                       step="0.1" placeholder="ex: 12.8">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="temperature" class="form-label">Température (°C)</label>
+                                <input type="number" th:field="*{temperature}" class="form-control" id="temperature" 
+                                       step="0.1" placeholder="ex: 37.2">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="pouls" class="form-label">Pouls (bpm)</label>
+                                <input type="number" th:field="*{pouls}" class="form-control" id="pouls" 
+                                       placeholder="ex: 75">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="poids" class="form-label">Poids (kg)</label>
+                                <input type="number" th:field="*{poids}" class="form-control" id="poids" 
+                                       step="0.1" placeholder="ex: 70.5">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Prescriptions modifiées -->
+                    <div class="col-md-6 mb-3">
+                        <label for="prescriptionsModifiees" class="form-label">
+                            <i class="fas fa-prescription-bottle"></i> Prescriptions Modifiées
+                        </label>
+                        <textarea th:field="*{prescriptionsModifiees}" class="form-control" id="prescriptionsModifiees" 
+                                  rows="3" placeholder="Modifications apportées aux prescriptions..." 
+                                  maxlength="500"></textarea>
+                    </div>
+
+                    <!-- Consignes -->
+                    <div class="col-md-6 mb-3">
+                        <label for="consignes" class="form-label">
+                            <i class="fas fa-clipboard-check"></i> Consignes
+                        </label>
+                        <textarea th:field="*{consignes}" class="form-control" id="consignes" 
+                                  rows="3" placeholder="Consignes pour le patient..." 
+                                  maxlength="1000"></textarea>
+                    </div>
+                </div>
+
+                <!-- Prochain rendez-vous -->
+                <div class="mb-3">
+                    <label for="prochainRendezVous" class="form-label">
+                        <i class="fas fa-calendar-plus"></i> Prochain Rendez-vous
+                    </label>
+                    <input type="datetime-local" th:field="*{prochainRendezVous}" class="form-control" id="prochainRendezVous">
+                    <div class="form-text">Date et heure du prochain suivi si nécessaire</div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <a th:href="@{/suivis}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Retour
+                                </a>
+                            </div>
+                            <div>
+                                <button type="reset" class="btn btn-outline-warning">
+                                    <i class="fas fa-undo"></i> Réinitialiser
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Enregistrer le Suivi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Informations consultation sélectionnée -->
+    <div th:if="${selectedConsultation}" class="card mt-3">
+        <div class="card-header">
+            <h6><i class="fas fa-info-circle"></i> Informations sur la Consultation</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Patient:</strong> <span th:text="${selectedConsultation.patientNomComplet}"></span>
+                </div>
+                <div class="col-md-4">
+                    <strong>Type:</strong> <span th:text="${selectedConsultation.type.libelle}"></span>
+                </div>
+                <div class="col-md-4">
+                    <strong>Date:</strong> <span th:text="${#temporals.format(selectedConsultation.dateHeureConsultation, 'dd/MM/yyyy HH:mm')}"></span>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <strong>Médecin:</strong> <span th:text="${selectedConsultation.medecin}"></span>
+                </div>
+                <div class="col-md-6">
+                    <strong>Diagnostic:</strong> <span th:text="${selectedConsultation.diagnostic != null ? selectedConsultation.diagnostic : 'Non renseigné'}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script layout:fragment="scripts">
+// Auto-complétion du personnel en fonction de la consultation sélectionnée
+document.getElementById('consultationId').addEventListener('change', function() {
+    const consultationId = this.value;
+    if (consultationId) {
+        // Vous pouvez ajouter une logique AJAX ici pour récupérer les informations
+        // de la consultation et préremplir certains champs
+    }
+});
+
+// Validation côté client
+document.querySelector('form').addEventListener('submit', function(e) {
+    const consultationId = document.getElementById('consultationId').value;
+    const typeSuivi = document.getElementById('typeSuivi').value;
+    const personnel = document.getElementById('personnel').value;
+    const observations = document.getElementById('observations').value;
+    
+    if (!consultationId) {
+        alert('Veuillez sélectionner une consultation');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!typeSuivi) {
+        alert('Veuillez sélectionner un type de suivi');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!personnel.trim()) {
+        alert('Veuillez renseigner le personnel responsable');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!observations.trim()) {
+        alert('Veuillez renseigner les observations');
+        e.preventDefault();
+
+    }
+});
+</script>
+</body>
+</html>

@@ -61,6 +61,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(ar->ar.requestMatchers("/personnel-administratif/**").hasAnyRole("USER", "ADMIN"))
             .authorizeHttpRequests(ar->ar.requestMatchers("/techniciens/**").hasAnyRole("USER", "ADMIN"))
             .authorizeHttpRequests(ar->ar.requestMatchers("/consultations/**").hasAnyRole("USER", "ADMIN"))
+            .authorizeHttpRequests(ar->ar.requestMatchers("/suivis/**").hasAnyRole("USER", "ADMIN"))
             .authorizeHttpRequests(ar->ar.requestMatchers("/rendez-vous/**").hasAnyRole("USER", "ADMIN"))
             .authorizeHttpRequests(ar->ar.requestMatchers("/creneaux-horaires/**").hasAnyRole("USER", "ADMIN"))
             .authorizeHttpRequests(ar->ar.requestMatchers("/dossiers-medicaux/**").hasAnyRole("USER", "ADMIN"))
