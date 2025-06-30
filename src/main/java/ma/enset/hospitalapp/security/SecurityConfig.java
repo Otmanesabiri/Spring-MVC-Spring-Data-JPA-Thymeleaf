@@ -51,7 +51,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
             .formLogin(formLogin -> formLogin
-                .defaultSuccessUrl("/patients", true)
+                .defaultSuccessUrl("/", true)
                 .permitAll()
             )
             .authorizeHttpRequests(ar->ar.requestMatchers("/deletePatient/**").hasRole("ADMIN"))

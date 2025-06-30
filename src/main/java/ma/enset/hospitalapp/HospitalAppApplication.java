@@ -22,17 +22,6 @@ public class HospitalAppApplication {
         SpringApplication.run(HospitalAppApplication.class, args);
     }
 
-    // Add this bean to log the port
-    @Bean
-    public ApplicationListener<WebServerInitializedEvent> webServerInitializedListener() {
-        return event -> {
-            int port = event.getWebServer().getPort();
-            System.out.println("====================================================");
-            System.out.println("Application is running on port: " + port);
-            System.out.println("Access the application at: http://localhost:" + port);
-            System.out.println("====================================================");
-        };
-    }
 
     @Bean
     CommandLineRunner start(PatientRepository patientRepository,
@@ -158,4 +147,17 @@ public class HospitalAppApplication {
             }
         };
     }
+
+    // Add this bean to log the port
+    @Bean
+    public ApplicationListener<WebServerInitializedEvent> webServerInitializedListener() {
+        return event -> {
+            int port = event.getWebServer().getPort();
+            System.out.println("====================================================");
+            System.out.println("Application is running on port: " + port);
+            System.out.println("Access the application at: http://localhost:" + port);
+            System.out.println("====================================================");
+        };
+    }
+
 }

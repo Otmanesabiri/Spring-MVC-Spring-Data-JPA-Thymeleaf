@@ -4,6 +4,7 @@
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Modifier Consultation</title>
 </head>
 <body>
@@ -52,15 +53,17 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="medecin" class="form-label">Médecin *</label>
-                                <input type="text" class="form-control"
-                                       name="medecin"
-                                       th:value="${consultation.medecin}"
-                                       id="medecin" required
-                                       placeholder="Nom du médecin"/>
-                                <small class="form-text text-muted">Nom complet du médecin</small>
+                                <label for="medecinId" class="form-label">Médecin *</label>
+                                <select class="form-select" name="medecinId" id="medecinId" required>
+                                    <option value="">-- Sélectionner un médecin --</option>
+                                    <option th:each="medecin : ${medecins}"
+                                        th:value="${medecin.id}"
+                                        th:text="${medecin.nom + ' ' + medecin.prenom + ' - ' + medecin.specialite + ' (ID: ' + medecin.id + ')'}">
+                                    </option>
+                                </select>
                             </div>
                         </div>
+                        
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="type" class="form-label">Type de Consultation *</label>
