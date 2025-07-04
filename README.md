@@ -408,12 +408,7 @@ public class DossierMedical {
 - Optimisation des performances
 - Validation finale des formulaires des sous-modules
 
-### 📋 Prochaines Étapes
-1. Tests d'intégration complets
-2. Optimisation des requêtes de base de données
-3. Ajout de rapports et statistiques
-4. Documentation technique complète
-5. Tests de performance et sécurité
+
 
 ### 📊 Statistiques du Projet
 - **Entités créées** : 11 entités principales
@@ -435,39 +430,32 @@ Ce projet est une application web de gestion hospitalière développée avec **S
 - Gestion des erreurs personnalisée (ex : page 403)
 - Interface utilisateur réactive avec Bootstrap
 
-## Architecture Technique
-- **Spring MVC** : Contrôleurs, services, DAO (repositories)
-- **Spring Data JPA** : Accès aux données via des repositories
-- **Thymeleaf** : Templates côté serveur pour le rendu HTML
-- **Spring Security** : Sécurisation de l’application
-- **Base de données** : H2 (dev) ou MySQL (prod)
+## Fonctionnalités Avancées Réalisées (Juin 2025)
 
-## Sécurité : Approches Implémentées
-L’application propose trois méthodes d’authentification :
-1. **En mémoire** : Pour le développement et les tests
-2. **JDBC** : Utilisation d’une base de données pour stocker les utilisateurs et rôles
-3. **UserDetailsService** : Chargement personnalisé des utilisateurs depuis la base
+### Suivi et Post-Suivi de Consultation
+- Affichage complet des suivis post-consultation avec pagination, recherche, filtres par statut/type.
+- Dashboard moderne des suivis : statistiques, derniers suivis, alertes sur les cas urgents.
+- Ajout, modification, suppression, et marquage comme terminé d’un suivi post-consultation.
+- Formulaire d’ajout dynamique : affichage des infos consultation sélectionnée, validation côté client.
+- Correction des erreurs d’affichage et de compatibilité SQL/Thymeleaf (requêtes H2, boutons JS, etc.).
+- Gestion robuste des erreurs serveur (500, chunked encoding, SQL, Thymeleaf).
+- Exportation de tous les suivis post-consultation au format CSV (UTF-8, séparateur `;`).
+- Interface d’importation de suivis (upload CSV/Excel, en cours de finalisation).
 
-## Technologies Utilisées
-- **Spring Boot 3.2.x**
-- **Spring MVC**
-- **Spring Data JPA**
-- **Thymeleaf**
-- **Spring Security**
-- **Bootstrap 5.3.0**
-- **H2/MySQL**
-- **Lombok**
+### Rendez-vous
+- Affichage des prochains rendez-vous (date future, statut non annulé) en haut de la page de gestion.
+- Filtrage, recherche, modification et suppression des rendez-vous existants.
 
-## Lancement de l’Application
-1. Cloner le dépôt
-2. Configurer la base de données dans `application.properties`
-3. Lancer l’application avec `mvn spring-boot:run` ou via votre IDE
-4. Accéder à l’interface sur [http://localhost:8080](http://localhost:8080)
+### Sécurité et Qualité
+- Gestion des accès et des rôles sur toutes les fonctionnalités sensibles.
+- Validation avancée des formulaires côté client et serveur.
+- Correction des erreurs de conversion d’enum (Spring/Thymeleaf).
+- Documentation et commentaires dans le code pour chaque module clé.
 
-## Notes
-- Les pages d’erreur personnalisées sont disponibles (ex : 403.html)
-- Les rôles et droits sont configurables dans la classe de configuration Spring Security
-- L’application est extensible pour d’autres modules (statistiques, gestion avancée, etc.)
+### Points techniques notables
+- Utilisation de Spring Boot 3.x et Jakarta EE (import jakarta.servlet).
+- Architecture modulaire : chaque module (patients, dossiers, suivis, rendez-vous) est indépendant et extensible.
+- Prise en charge de l’export/import de données pour faciliter la migration ou l’analyse.
 
 ---
 

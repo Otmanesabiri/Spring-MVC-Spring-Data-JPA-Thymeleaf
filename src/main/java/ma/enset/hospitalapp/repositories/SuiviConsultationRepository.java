@@ -45,7 +45,7 @@ public interface SuiviConsultationRepository extends JpaRepository<SuiviConsulta
     List<SuiviConsultation> findSuivisUrgents();
     
     // Suivis du jour
-    @Query("SELECT s FROM SuiviConsultation s WHERE DATE(s.dateSuivi) = DATE(CURRENT_DATE) ORDER BY s.dateSuivi DESC")
+    @Query("SELECT s FROM SuiviConsultation s WHERE CAST(s.dateSuivi AS date) = CURRENT_DATE ORDER BY s.dateSuivi DESC")
     List<SuiviConsultation> findSuivisDuJour();
     
     // Suivis nécessitant attention

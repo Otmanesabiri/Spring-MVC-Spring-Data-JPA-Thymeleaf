@@ -2,7 +2,6 @@ package ma.enset.hospitalapp.services;
 
 import ma.enset.hospitalapp.entities.*;
 import ma.enset.hospitalapp.repositories.SuiviConsultationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -69,6 +68,12 @@ public class SuiviConsultationServiceImpl implements SuiviConsultationService {
     @Override
     public Page<SuiviConsultation> getAllSuivis(Pageable pageable) {
         return findAllSuivis(pageable);
+    }
+
+    // Pour export CSV (liste complète sans pagination)
+    @Override
+    public List<SuiviConsultation> getAllSuivis() {
+        return suiviConsultationRepository.findAll();
     }
 
     @Override

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Réservations de Chambres</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-4">
+        <h2><i class="fas fa-calendar-alt"></i> Réservations de Chambres</h2>
+        <a th:href="@{/reservations/add}" class="btn btn-success mb-3"><i class="fas fa-plus"></i> Nouvelle Réservation</a>
+        
+        <div th:if="${successMessage}" class="alert alert-success"> 
+            <span th:text="${successMessage}"></span> 
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger"> 
+            <span th:text="${errorMessage}"></span> 
+        </div>
+        
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Patient</th>
+                    <th>Chambre</th>
+                    <th>Lit</th>
+                    <th>Date Début</th>
+                    <th>Date Fin</th>
+                    <th>Statut</th>
+                    <th>Motif</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="reservation, i : ${reservations}">
+                    <td th:text="${i.index + 1}"></td>
+                    <td th:text="${reservation.patient != null ? reservation.patient.nom + ' ' + reservation.patient.prenom : 'N/A'}"></td>
+                    <td th:text="${reservation.chambre != null ? reservation.chambre.numero : 'N/A'}"></td>
+                    <td th:text="${reservation.lit != null ? reservation.lit.numero : 'N/A'}"></td>
+                    <td th:text="${#temporals.format(reservation.dateDebut, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${#temporals.format(reservation.dateFin, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td>
+                        <span th:text="${reservation.statut}" 
+                              th:class="${reservation.statut == T(ma.enset.hospitalapp.entities.StatutReservation).CONFIRMEE ? 'badge bg-success' : 
+                                         reservation.statut == T(ma.enset.hospitalapp.entities.StatutReservation).EN_ATTENTE ? 'badge bg-warning' : 
+                                         reservation.statut == T(ma.enset.hospitalapp.entities.StatutReservation).ANNULEE ? 'badge bg-danger' : 
+                                         reservation.statut == T(ma.enset.hospitalapp.entities.StatutReservation).TERMINEE ? 'badge bg-secondary' : 'badge bg-light'}"></span>
+                    </td>
+                    <td th:text="${reservation.motif}"></td>
+                    <td>
+                        <a th:href="@{/reservations/edit/{id}(id=${reservation.id})}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
+                        <a th:href="@{/reservations/delete/{id}(id=${reservation.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette réservation ?')"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(reservations)}">
+                    <td colspan="9" class="text-center text-muted">Aucune réservation enregistrée</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <a th:href="@{/}" class="btn btn-secondary mt-3">Accueil</a>
+    </div>
+</div>
+</body>
+</html>

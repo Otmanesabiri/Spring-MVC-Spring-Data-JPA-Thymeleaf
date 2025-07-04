@@ -71,4 +71,7 @@ public interface SuiviConsultationService {
     
     // Dernier suivi pour une consultation
     SuiviConsultation getDernierSuivi(Consultation consultation);
+    
+    // Pour export CSV (liste complète sans pagination)
+    List<SuiviConsultation> getAllSuivis();
 }

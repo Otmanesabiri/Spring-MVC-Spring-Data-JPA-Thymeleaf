@@ -1,5 +1,6 @@
 package ma.enset.hospitalapp.controllers;
 
+import jakarta.servlet.http.HttpServletResponse;
 import ma.enset.hospitalapp.entities.*;
 import ma.enset.hospitalapp.services.ConsultationService;
 import ma.enset.hospitalapp.services.SuiviConsultationService;
@@ -32,29 +33,30 @@ public class SuiviConsultationController {
                              @RequestParam(name = "keyword", defaultValue = "") String keyword,
                              @RequestParam(name = "statut", required = false) StatutSuivi statut,
                              @RequestParam(name = "type", required = false) TypeSuivi type) {
-        
-        Page<SuiviConsultation> suivis;
-        
-        if (!keyword.isEmpty() || statut != null || type != null) {
-            suivis = suiviConsultationService.rechercherSuivis(keyword, statut, type, PageRequest.of(page, size));
-        } else {
-            suivis = suiviConsultationService.getAllSuivis(PageRequest.of(page, size));
+        try {
+            Page<SuiviConsultation> suivis;
+            if (!keyword.isEmpty() || statut != null || type != null) {
+                suivis = suiviConsultationService.rechercherSuivis(keyword, statut, type, PageRequest.of(page, size));
+            } else {
+                suivis = suiviConsultationService.getAllSuivis(PageRequest.of(page, size));
+            }
+            model.addAttribute("listSuivis", suivis.getContent());
+            model.addAttribute("pages", new int[suivis.getTotalPages()]);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("keyword", keyword);
+            model.addAttribute("selectedStatut", statut);
+            model.addAttribute("selectedType", type);
+            model.addAttribute("statutsSuivi", StatutSuivi.values());
+            model.addAttribute("typesSuivi", TypeSuivi.values());
+            model.addAttribute("totalPages", suivis.getTotalPages());
+            // Statistiques pour le dashboard
+            SuiviDashboardStats stats = suiviConsultationService.getSuiviDashboardStats();
+            model.addAttribute("stats", stats);
+            return "suivis-consultation";
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur interne: " + e.getMessage());
+            return "suivis-consultation";
         }
-        
-        model.addAttribute("listSuivis", suivis.getContent());
-        model.addAttribute("pages", new int[suivis.getTotalPages()]);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("selectedStatut", statut);
-        model.addAttribute("selectedType", type);
-        model.addAttribute("statutsSuivi", StatutSuivi.values());
-        model.addAttribute("typesSuivi", TypeSuivi.values());
-        
-        // Statistiques pour le dashboard
-        SuiviDashboardStats stats = suiviConsultationService.getSuiviDashboardStats();
-        model.addAttribute("stats", stats);
-        
-        return "suivis-consultation";
     }
 
     // Formulaire d'ajout de suivi
@@ -83,24 +85,28 @@ public class SuiviConsultationController {
                            RedirectAttributes redirectAttributes) {
         try {
             Consultation consultation = consultationService.getConsultationById(consultationId);
+            if (consultation == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Consultation introuvable. Veuillez sélectionner une consultation valide.");
+                return "redirect:/suivis/add";
+            }
             suivi.setConsultation(consultation);
             suivi.setDateCreation(LocalDateTime.now());
-            
+
             // Validation manuelle
             if (suivi.getObservations() == null || suivi.getObservations().trim().isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Les observations sont obligatoires");
                 return "redirect:/suivis/add?consultationId=" + consultationId;
             }
-            
+
             if (suivi.getTypeSuivi() == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Le type de suivi est obligatoire");
                 return "redirect:/suivis/add?consultationId=" + consultationId;
             }
-            
+
             suiviConsultationService.saveSuivi(suivi);
             redirectAttributes.addFlashAttribute("successMessage", "Suivi créé avec succès");
             return "redirect:/suivis";
-            
+
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la création du suivi: " + e.getMessage());
             return "redirect:/suivis/add?consultationId=" + consultationId;
@@ -229,5 +235,32 @@ public class SuiviConsultationController {
         model.addAttribute("suivisUrgents", suivisUrgents);
         
         return "suivi-dashboard";
+    }
+
+    // Exporter les suivis au format CSV
+    @GetMapping("/export")
+    @ResponseBody
+    public void exportSuivisCsv(HttpServletResponse response) throws java.io.IOException {
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=suivis.csv");
+        java.io.PrintWriter writer = response.getWriter();
+        // En-tête CSV
+        writer.println("ID;Date Suivi;Personnel;Type;Statut;Observations;Actions;Consignes;Prochain RDV");
+        List<SuiviConsultation> suivis = suiviConsultationService.getAllSuivis();
+        for (SuiviConsultation s : suivis) {
+            writer.printf("%d;%s;%s;%s;%s;%s;%s;%s;%s\n",
+                s.getId(),
+                s.getDateSuivi() != null ? s.getDateSuivi().toString() : "",
+                s.getPersonnel() != null ? s.getPersonnel().replace(";", ",") : "",
+                s.getTypeSuivi() != null ? s.getTypeSuivi().name() : "",
+                s.getStatutSuivi() != null ? s.getStatutSuivi().name() : "",
+                s.getObservations() != null ? s.getObservations().replace(";", ",") : "",
+                s.getActions() != null ? s.getActions().replace(";", ",") : "",
+                s.getConsignes() != null ? s.getConsignes().replace(";", ",") : "",
+                s.getProchainRendezVous() != null ? s.getProchainRendezVous().toString() : ""
+            );
+        }
+        writer.flush();
+        writer.close();
     }
 }

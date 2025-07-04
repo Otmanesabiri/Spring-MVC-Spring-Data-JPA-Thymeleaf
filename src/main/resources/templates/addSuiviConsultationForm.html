@@ -50,7 +50,7 @@
                         <select id="typeSuivi" th:field="*{typeSuivi}" class="form-select" required>
                             <option value="">Sélectionner le type...</option>
                             <option th:each="type : ${typesSuivi}"
-                                    th:value="${type}"
+                                    th:value="${type.name()}"
                                     th:text="${type.libelle}"></option>
                         </select>
                     </div>
@@ -74,7 +74,7 @@
                         </label>
                         <select id="statutSuivi" th:field="*{statutSuivi}" class="form-select">
                             <option th:each="statut : ${statutsSuivi}"
-                                    th:value="${statut}"
+                                    th:value="${statut.name()}"
                                     th:text="${statut.libelle}"
                                     th:selected="${statut.name() == 'EN_COURS'}"></option>
                         </select>
@@ -220,11 +220,24 @@
 
 <script layout:fragment="scripts">
 // Auto-complétion du personnel en fonction de la consultation sélectionnée
+const consultations = /*[[${consultations}]]*/ [];
+const selectedConsultationDiv = document.querySelector('[th\\:if="${selectedConsultation}"]');
+
 document.getElementById('consultationId').addEventListener('change', function() {
     const consultationId = this.value;
-    if (consultationId) {
-        // Vous pouvez ajouter une logique AJAX ici pour récupérer les informations
-        // de la consultation et préremplir certains champs
+    if (!consultationId) {
+        if (selectedConsultationDiv) selectedConsultationDiv.style.display = 'none';
+        return;
+    }
+    // Recherche de la consultation dans la liste (si consultations exposées en JS)
+    const consultation = consultations.find(c => c.id == consultationId);
+    if (consultation && selectedConsultationDiv) {
+        selectedConsultationDiv.style.display = '';
+        selectedConsultationDiv.querySelector('[th\\:text="${selectedConsultation.patientNomComplet}"]').textContent = consultation.patientNomComplet;
+        selectedConsultationDiv.querySelector('[th\\:text="${selectedConsultation.type.libelle}"]').textContent = consultation.type.libelle;
+        selectedConsultationDiv.querySelector('[th\\:text="${#temporals.format(selectedConsultation.dateHeureConsultation, \'dd/MM/yyyy HH:mm\')}"]').textContent = consultation.dateHeureConsultation;
+        selectedConsultationDiv.querySelector('[th\\:text="${selectedConsultation.medecin}"]').textContent = consultation.medecin;
+        selectedConsultationDiv.querySelector('[th\\:text*="diagnostic"]').textContent = consultation.diagnostic || 'Non renseigné';
     }
 });
 

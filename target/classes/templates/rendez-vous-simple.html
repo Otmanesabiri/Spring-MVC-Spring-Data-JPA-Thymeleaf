@@ -17,6 +17,32 @@
                 </a>
             </div>
             <div class="card-body">
+                <div class="mb-4">
+                    <h4><i class="fas fa-calendar-alt"></i> Prochains rendez-vous</h4>
+                    <div th:if="${prochainsRendezVous != null and !prochainsRendezVous.isEmpty()}">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date/Heure</th>
+                                    <th>Patient</th>
+                                    <th>Médecin</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="rdv : ${prochainsRendezVous}">
+                                    <td th:text="${#dates.format(rdv.dateHeureRendezVous, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td th:text="${rdv.patient.name}"></td>
+                                    <td th:text="${'Dr. ' + rdv.medecin.nom + ' ' + rdv.medecin.prenom}"></td>
+                                    <td><span class="badge bg-primary" th:text="${rdv.statut.libelle}"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div th:unless="${prochainsRendezVous != null and !prochainsRendezVous.isEmpty()}">
+                        <span class="text-muted">Aucun rendez-vous à venir.</span>
+                    </div>
+                </div>
                 <div th:if="${listRendezVous != null and !listRendezVous.isEmpty()}">
                     <table class="table table-striped">
                         <thead>

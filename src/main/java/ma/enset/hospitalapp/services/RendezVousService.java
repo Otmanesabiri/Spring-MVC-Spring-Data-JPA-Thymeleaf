@@ -53,4 +53,7 @@ public interface RendezVousService {
     void envoyerRappel(Long rendezVousId);
     
     void planifierRappels();
+    
+    // Renvoie la liste des prochains rendez-vous (date > maintenant, statut non annulé)
+    List<RendezVous> getProchainsRendezVous();
 }

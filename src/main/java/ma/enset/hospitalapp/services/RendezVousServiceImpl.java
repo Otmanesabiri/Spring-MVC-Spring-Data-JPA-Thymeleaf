@@ -201,4 +201,14 @@ public class RendezVousServiceImpl implements RendezVousService {
             }
         }
     }
+
+    // Renvoie la liste des prochains rendez-vous (date > maintenant, statut non annulé)
+    public List<RendezVous> getProchainsRendezVous() {
+        Date now = new Date();
+        return rendezVousRepository.findAll().stream()
+                .filter(r -> r.getDateHeureRendezVous() != null && r.getDateHeureRendezVous().after(now))
+                .filter(r -> r.getStatut() != StatutRendezVous.ANNULE && r.getStatut() != StatutRendezVous.REPORTE)
+                .sorted(Comparator.comparing(RendezVous::getDateHeureRendezVous))
+                .toList();
+    }
 }

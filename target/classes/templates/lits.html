@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lits de la Chambre</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-4">
+        <h2>
+            <i class="fas fa-bed"></i>
+            <span th:if="${chambre != null}">Lits de la chambre <span th:text="${chambre.numero}"></span></span>
+            <span th:if="${chambre == null}">Tous les lits</span>
+        </h2>
+        <a th:if="${chambre != null}" th:href="@{/lits/add/{id}(id=${chambre.id})}" class="btn btn-success mb-3"><i class="fas fa-plus"></i> Ajouter un lit</a>
+        <a th:if="${chambre == null}" th:href="@{/lits/add}" class="btn btn-success mb-3"><i class="fas fa-plus"></i> Ajouter un lit</a>
+        <div th:if="${successMessage}" class="alert alert-success"> <span th:text="${successMessage}"></span> </div>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Numéro</th>
+                    <th>Statut</th>
+                    <th th:if="${chambre == null}">Chambre</th>
+                    <th th:if="${chambre == null}">Type Chambre</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="lit, i : ${lits}">
+                    <td th:text="${i.index + 1}"></td>
+                    <td th:text="${lit.numero}"></td>
+                    <td>
+                        <span th:text="${lit.statut}" 
+                              th:class="${lit.statut == T(ma.enset.hospitalapp.entities.StatutLit).LIBRE ? 'badge bg-success' : 
+                                         lit.statut == T(ma.enset.hospitalapp.entities.StatutLit).OCCUPE ? 'badge bg-danger' : 
+                                         lit.statut == T(ma.enset.hospitalapp.entities.StatutLit).RESERVE ? 'badge bg-warning' :
+                                         lit.statut == T(ma.enset.hospitalapp.entities.StatutLit).MAINTENANCE ? 'badge bg-secondary' : 'badge bg-light'}"></span>
+                    </td>
+                    <td th:if="${chambre == null}" th:text="${lit.chambre != null ? lit.chambre.numero : 'N/A'}"></td>
+                    <td th:if="${chambre == null}" th:text="${lit.chambre != null ? lit.chambre.type : 'N/A'}"></td>
+                    <td>
+                        <a th:href="@{/lits/edit/{id}(id=${lit.id})}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
+                        <a th:href="@{/lits/delete/{id}(id=${lit.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ce lit ?')"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(lits)}">
+                    <td th:if="${chambre == null}" colspan="6" class="text-center text-muted">Aucun lit enregistré</td>
+                    <td th:if="${chambre != null}" colspan="4" class="text-center text-muted">Aucun lit enregistré</td>
+                </tr>
+            </tbody>
+        </table>
+        <a th:if="${chambre != null}" th:href="@{/chambres}" class="btn btn-secondary mt-3">Retour aux chambres</a>
+        <a th:if="${chambre == null}" th:href="@{/}" class="btn btn-secondary mt-3">Accueil</a>
+    </div>
+</div>
+</body>
+</html>

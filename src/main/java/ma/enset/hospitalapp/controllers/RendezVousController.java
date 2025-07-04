@@ -51,6 +51,8 @@ public class RendezVousController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("statut", statut);
         model.addAttribute("statuts", StatutRendezVous.values());
+        // Ajout des prochains rendez-vous (date future, statut non annulé)
+        model.addAttribute("prochainsRendezVous", rendezVousService.getProchainsRendezVous());
         
         return "rendez-vous-simple";
     }

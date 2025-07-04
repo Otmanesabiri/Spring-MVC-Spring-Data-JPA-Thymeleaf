@@ -54,6 +54,17 @@
                         <li><a class="dropdown-item" th:href="@{/dossiers-medicaux}"><i class="fas fa-folder-medical"></i> Dossiers Médicaux</a></li>
                     </ul>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="chambreLitDropdown" role="button" data-bs-toggle="dropdown">
+                        Chambres & Lits
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" th:href="@{/chambres}"><i class="fas fa-bed"></i> Chambres</a></li>
+                        <li><a class="dropdown-item" th:href="@{/lits}"><i class="fas fa-procedures"></i> Lits</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/reservations}"><i class="fas fa-calendar-alt"></i> Réservations</a></li>
+                    </ul>
+                </li>
                 <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
                     <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
                         Admin
